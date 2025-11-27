@@ -66,10 +66,6 @@ class News(models.Model):
     description_ru = models.TextField(blank=True, verbose_name="Описание (RU)")
     description_kg = models.TextField(blank=True, verbose_name="Описание (KG)")
 
-    fulltext_en = models.TextField(blank=True, verbose_name="Полный текст (EN)")
-    fulltext_ru = models.TextField(blank=True, verbose_name="Полный текст (RU)")
-    fulltext_kg = models.TextField(blank=True, verbose_name="Полный текст (KG)")
-
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания", db_index=True)
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 

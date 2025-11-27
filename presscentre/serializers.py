@@ -8,8 +8,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ["id", "slug", "title_en", "title_ru", "title_kg", "title"]
-        read_only_fields = ["id", "slug"]
+        fields = ["id", "title_en", "title_ru", "title_kg", "title"]
+        read_only_fields = ["id"]
 
     def get_title(self, obj):
         language = self._get_language()
@@ -26,11 +26,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class NewsSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    title = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-    short_description = serializers.SerializerMethodField()
-    fulltext = serializers.SerializerMethodField()
+    # category = CategorySerializer(read_only=True)
+    # title = serializers.SerializerMethodField()
+    # description = serializers.SerializerMethodField()
+    # short_description = serializers.SerializerMethodField()
 
     class Meta:
         model = News
@@ -45,9 +44,6 @@ class NewsSerializer(serializers.ModelSerializer):
             "short_description_en",
             "short_description_ru",
             "short_description_kg",
-            "fulltext_en",
-            "fulltext_ru",
-            "fulltext_kg",
             "image",
             "is_recommended",
             "created_at",

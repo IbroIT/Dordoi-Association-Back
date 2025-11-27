@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ["id", "title_en", "title_ru", "title_kg", "title"]
+        fields = ["id", "title"]
         read_only_fields = ["id"]
 
     def get_title(self, obj):
@@ -21,29 +21,29 @@ class CategorySerializer(serializers.ModelSerializer):
             return lang
         request = self.context.get("request")
         if request:
-            return request.GET.get("lang") or getattr(request, "LANGUAGE_CODE", None) or "ru"
+            return (
+                request.GET.get("lang")
+                or getattr(request, "LANGUAGE_CODE", None)
+                or "ru"
+            )
         return "ru"
 
 
 class NewsSerializer(serializers.ModelSerializer):
-    # category = CategorySerializer(read_only=True)
-    # title = serializers.SerializerMethodField()
-    # description = serializers.SerializerMethodField()
-    # short_description = serializers.SerializerMethodField()
+
+
+    category = CategorySerializer(read_only=True)
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    short_description = serializers.SerializerMethodField()
 
     class Meta:
         model = News
         fields = [
             "id",
-            "title_en",
-            "title_ru",
-            "title_kg",
-            "description_en",
-            "description_ru",
-            "description_kg",
-            "short_description_en",
-            "short_description_ru",
-            "short_description_kg",
+            "title",
+            "description",
+            "short_description",
             "image",
             "is_recommended",
             "created_at",
@@ -75,5 +75,9 @@ class NewsSerializer(serializers.ModelSerializer):
             return lang
         request = self.context.get("request")
         if request:
-            return request.GET.get("lang") or getattr(request, "LANGUAGE_CODE", None) or "ru"
+            return (
+                request.GET.get("lang")
+                or getattr(request, "LANGUAGE_CODE", None)
+                or "ru"
+            )
         return "ru"

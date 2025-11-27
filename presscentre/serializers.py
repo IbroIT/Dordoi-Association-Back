@@ -1,0 +1,83 @@
+from rest_framework import serializers
+from .models import Category, News
+
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    title = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ["id", "slug", "title_en", "title_ru", "title_kg", "title"]
+        read_only_fields = ["id", "slug"]
+
+    def get_title(self, obj):
+        language = self._get_language()
+        return obj.get_title(language=language)
+
+    def _get_language(self):
+        lang = self.context.get("language")
+        if lang:
+            return lang
+        request = self.context.get("request")
+        if request:
+            return request.GET.get("lang") or getattr(request, "LANGUAGE_CODE", None) or "ru"
+        return "ru"
+
+
+class NewsSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    short_description = serializers.SerializerMethodField()
+    fulltext = serializers.SerializerMethodField()
+
+    class Meta:
+        model = News
+        fields = [
+            "id",
+            "title_en",
+            "title_ru",
+            "title_kg",
+            "description_en",
+            "description_ru",
+            "description_kg",
+            "short_description_en",
+            "short_description_ru",
+            "short_description_kg",
+            "fulltext_en",
+            "fulltext_ru",
+            "fulltext_kg",
+            "image",
+            "is_recommended",
+            "created_at",
+            "updated_at",
+            "category",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_title(self, obj):
+        language = self._get_language()
+        return obj.get_title(language=language)
+
+    def get_description(self, obj):
+        language = self._get_language()
+        return obj.get_description(language=language)
+
+    def get_short_description(self, obj):
+        language = self._get_language()
+        return obj.get_short_description(language=language)
+
+    def get_fulltext(self, obj):
+        language = self._get_language()
+        return obj.get_fulltext(language=language)
+
+    def _get_language(self):
+
+        lang = self.context.get("language")
+        if lang:
+            return lang
+        request = self.context.get("request")
+        if request:
+            return request.GET.get("lang") or getattr(request, "LANGUAGE_CODE", None) or "ru"
+        return "ru"

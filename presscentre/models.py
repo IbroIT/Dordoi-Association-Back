@@ -30,7 +30,11 @@ class Category(models.Model):
         if language != "en" and self.title_en and self.title_en.strip():
             return self.title_en.strip()
 
-        return f"Category #{self.pk}" if self.pk else "New Category"
+        return f"Category #{self.kg}"
+
+    @property
+    def title(self):
+        return self.get_title(language="ru") or ""
 
     def clean(self):
         super().clean()

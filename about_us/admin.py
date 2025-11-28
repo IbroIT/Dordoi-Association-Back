@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import FactCard, FactDetail
 
-# Register your models here.
+admin.site.register(FactCard)
+admin.site.register(FactDetail)

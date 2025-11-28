@@ -3,12 +3,20 @@
 ### categories
 
 ```http
-/api/presscentre/news/
+/api/presscentre/categories/
 ```
 
 ```json
 {
-  "title": "Категория RU"
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "title": "Категория RU"
+        }
+    ]
 }
 ```
 

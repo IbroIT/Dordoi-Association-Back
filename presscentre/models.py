@@ -139,21 +139,6 @@ class News(models.Model):
 
         return self.get_description(language)
 
-    def get_fulltext(self, language="ru"):
-        field_name = f"fulltext_{language}"
-        value = getattr(self, field_name, None)
-
-        if value and value.strip():
-            return value.strip()
-
-        if language != "ru" and self.fulltext_ru and self.fulltext_ru.strip():
-            return self.fulltext_ru.strip()
-
-        if language != "en" and self.fulltext_en and self.fulltext_en.strip():
-            return self.fulltext_en.strip()
-
-        return ""
-
     def clean(self):
         super().clean()
         if not any([self.title_ru, self.title_en, self.title_kg]):

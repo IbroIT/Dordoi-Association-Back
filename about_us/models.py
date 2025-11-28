@@ -76,3 +76,41 @@ class FactDetail(models.Model):
             return self.detail_en.strip()
 
         return f"FactDetail #{self.id}"
+    
+
+class Leader(models.Model):
+    photo = models.ImageField(upload_to="leaders/", verbose_name="Фото")
+    name_ru = models.CharField(max_length=255, verbose_name="ФИО (RU)")
+    name_en = models.CharField(max_length=255, verbose_name="ФИО (EN)")
+    name_kg = models.CharField(max_length=255, verbose_name="ФИО (KG)")
+    position_ru = models.CharField(max_length=255, verbose_name="Должность (RU)")
+    position_en = models.CharField(max_length=255, verbose_name="Должность (EN)")
+    position_kg = models.CharField(max_length=255, verbose_name="Должность (KG)")  
+    bio_kg = models.TextField(verbose_name="Биография (KG)")
+    bio_ru = models.TextField(verbose_name="Биография (RU)")
+    bio_en = models.TextField(verbose_name="Биография (EN)")
+    achievements_kg = models.JSONField(verbose_name="Достижения (KG)")
+    achievements_ru = models.JSONField(verbose_name="Достижения (RU)")
+    achievements_en = models.JSONField(verbose_name="Достижения (EN)")
+    education_kg = models.JSONField(verbose_name="Образование (KG)")
+    education_ru = models.JSONField(verbose_name="Образование (RU)")
+    education_en = models.JSONField(verbose_name="Образование (EN)")
+
+    class Meta:
+        verbose_name = "Лидер"
+        verbose_name_plural = "Лидеры"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.get_name()
+    def get_name(self, language="ru"):
+        return getattr(self, f"name_{language}", self.name_ru)
+    def get_position(self, language="ru"):
+        return getattr(self, f"position_{language}", self.position_ru)
+    def get_bio(self, language="ru"):
+        return getattr(self, f"bio_{language}", self.bio_ru)
+    def get_achievements(self, language="ru"):
+        return getattr(self, f"achievements_{language}", self.achievements_ru)
+    def get_education(self, language="ru"):
+        return getattr(self, f"education_{language}", self.education_ru)
+    

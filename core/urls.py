@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/presscentre/", include("presscentre.urls")),
     path("api/about-us/", include("about_us.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/", include("partners.urls")),
     path(
         "swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),

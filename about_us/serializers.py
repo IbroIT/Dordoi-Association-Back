@@ -1,6 +1,40 @@
 from rest_framework import serializers
-from .models import FactCard, FactDetail
+from .models import FactCard, FactDetail, Leader
 
+
+class LeaderSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    position = serializers.SerializerMethodField()
+    bio = serializers.SerializerMethodField()
+    achievements = serializers.SerializerMethodField()
+    education = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Leader
+        fields = [
+            'id',
+            'photo',
+            'name',
+            'position',
+            'bio',
+            'achievements',
+            'education'
+        ]
+
+    def get_name(self, obj):
+        return obj.get_name(self.context.get("language", "ru"))
+
+    def get_position(self, obj):
+        return obj.get_position(self.context.get("language", "ru"))
+
+    def get_bio(self, obj):
+        return obj.get_bio(self.context.get("language", "ru"))
+
+    def get_achievements(self, obj):
+        return obj.get_achievements(self.context.get("language", "ru"))
+
+    def get_education(self, obj):
+        return obj.get_education(self.context.get("language", "ru"))
 
 class LocalizationSerializerMixin:
     """Миксин для локализации сериализаторов"""

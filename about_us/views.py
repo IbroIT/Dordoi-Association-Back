@@ -2,9 +2,37 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import FactCard, FactDetail
-from .serializers import FactCardSerializer, FactDetailSerializer
+from .models import FactCard, FactDetail,Leader
+from .serializers import FactCardSerializer, FactDetailSerializer,LeaderSerializer
+from rest_framework import generics
 
+
+class LeaderListView(generics.ListAPIView):
+    """
+    View для получения списка всех лидеров
+    Поддерживает параметр lang для выбора языка (ru, en, kg)
+    """
+    queryset = Leader.objects.all()
+    serializer_class = LeaderSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["language"] = self.request.query_params.get("lang", "ru")
+        return context
+
+class LeaderDetailView(generics.RetrieveAPIView):
+    """
+    View для получения детальной информации о лидере
+    Поддерживает параметр lang для выбора языка (ru, en, kg)
+    """
+    queryset = Leader.objects.all()
+    serializer_class = LeaderSerializer
+    lookup_field = 'id'
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["language"] = self.request.query_params.get("lang", "ru")
+        return context
 
 class LocalizationMixin:
     """Миксин для передачи языка в контекст сериализатора"""

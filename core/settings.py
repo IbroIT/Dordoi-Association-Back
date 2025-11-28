@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django_filters",
     "presscentre",
     "about_us",
+    "partners",
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,17 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # ... your other DRF settings
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Dordoi Association API',
+    'DESCRIPTION': 'API for Dordoi Association',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}

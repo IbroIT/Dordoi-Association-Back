@@ -69,6 +69,8 @@ class News(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания", db_index=True)
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
+    published_at = models.DateField(null=True, blank=True, verbose_name="Дата публикации", db_index=True)
+
     image = models.ImageField(upload_to="news/",null=True,blank=True,verbose_name="Изображение",help_text="Рекомендуемый размер: 1200x630px",)
 
     class Meta:

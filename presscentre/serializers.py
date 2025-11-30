@@ -51,6 +51,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
             "is_recommended",
             "created_at",
             "updated_at",
+            "published_at",
             "category",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]

@@ -1,5 +1,8 @@
+from unfold.admin import ModelAdmin
 from django.contrib import admin
 from .models import Partner
 
-# Register your models here.
-admin.site.register(Partner)
+
+@admin.register(Partner)
+class PartnerAdmin(ModelAdmin):
+    pass

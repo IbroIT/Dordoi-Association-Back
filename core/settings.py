@@ -218,12 +218,8 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         'CacheControl': 'max-age=86400',
     }
     
-    # Use signed URLs for reliable access
-    AWS_S3_SIGNATURE_VERSION = 's3v4'
-    AWS_QUERYSTRING_AUTH = True  # Enable signed URLs
-    AWS_S3_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB
-    
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    # Use local media URL for API responses to use our proxy
+    MEDIA_URL = '/media/'
     DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
 else:
     MEDIA_URL = "/media/"

@@ -218,12 +218,11 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         'CacheControl': 'max-age=86400',
     }
     
-    # Use long-term signed URLs for media files (1 year expiration)
-    AWS_QUERYSTRING_AUTH = True
+    # Use direct public URLs without signed parameters
+    AWS_QUERYSTRING_AUTH = False
     AWS_S3_SIGNATURE_VERSION = 's3v4'
-    AWS_S3_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB
     
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
     DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
 else:
     MEDIA_URL = "/media/"

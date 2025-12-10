@@ -218,11 +218,8 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         'CacheControl': 'max-age=86400',
     }
     
-    # Use direct public URLs without signed parameters
-    AWS_QUERYSTRING_AUTH = False
-    AWS_S3_SIGNATURE_VERSION = 's3v4'
-    
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    # Use Django proxy for reliable public access
+    MEDIA_URL = '/media/'
     DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
 else:
     MEDIA_URL = "/media/"

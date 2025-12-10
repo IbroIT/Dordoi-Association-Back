@@ -36,10 +36,10 @@ INSTALLED_APPS = [
     "unfold.contrib.forms",
     "unfold.contrib.inlines",
     "unfold.contrib.import_export",
-    "unfold.contrib.guardian",
-    "unfold.contrib.simple_history",
-    "unfold.contrib.location_field",
-    "unfold.contrib.constance",
+    # "unfold.contrib.guardian",  # Commented out - may not be available
+    # "unfold.contrib.simple_history",  # Commented out - may not be available
+    # "unfold.contrib.location_field",  # Commented out - may not be available
+    # "unfold.contrib.constance",  # Commented out - may not be available
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

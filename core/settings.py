@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "presscentre",
     "about_us",
     "partners",
+    "core",
 ]
 
 

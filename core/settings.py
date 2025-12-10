@@ -190,8 +190,7 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
     from .storage import PublicMediaStorage
     DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
-    # Use local media URL for API responses to use our proxy
-    MEDIA_URL = '/media/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
     # Additional S3 settings for public access
     AWS_QUERYSTRING_AUTH = False  # Remove query parameters from URLs

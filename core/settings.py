@@ -94,7 +94,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173"
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for debugging
+CORS_ALLOW_ALL_ORIGINS = False  # Disable wildcard for CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -213,13 +213,13 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
     AWS_S3_USE_SSL = True
     AWS_S3_VERIFY = True
     AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None  # Remove default ACL to avoid issues with some S3-compatible services
+    AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
     
-    # Use local media URL for API responses to use our proxy
-    MEDIA_URL = '/media/'
+    # Use direct S3 URLs for media files
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     MEDIA_URL = "/media/"

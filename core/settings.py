@@ -83,7 +83,14 @@ REST_FRAMEWORK = {
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173').split(',')
 
+# Allow all origins for media files (images from S3)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://.*\.s3\.amazonaws\.com$',
+    r'^https://.*\.s3\.eu-west-1\.amazonaws\.com$',
+]
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True  # For development - allow all origins
 
 ROOT_URLCONF = "core.urls"
 
@@ -169,15 +176,29 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('BUCKETEER_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('BUCKETEER_AWS_REGION')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# S3 settings for public access
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
+    'ACL': 'public-read'  # Explicitly set ACL for each object
 }
+AWS_S3_REGION_NAME = os.environ.get('BUCKETEER_AWS_REGION', 'eu-west-1')
+AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # Use S3 for media files if AWS credentials are provided
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    from .storage import PublicMediaStorage
+    DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+    # Additional S3 settings for public access
+    AWS_QUERYSTRING_AUTH = False  # Remove query parameters from URLs
+    AWS_S3_SECURE_URLS = True
+    AWS_S3_USE_SSL = True
+
+    # boto3 specific settings
+    AWS_S3_ADDRESSING_STYLE = 'virtual'
 else:
     # Fallback to local storage in development
     MEDIA_URL = '/media/'

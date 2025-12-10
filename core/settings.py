@@ -206,25 +206,63 @@ AWS_ACCESS_KEY_ID = os.getenv('BUCKETEER_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKETEER_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
 
-# Media files
+# Configure bucket for public access
 if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_USE_SSL = True
-    AWS_S3_VERIFY = True
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
-    
-    # Use Django proxy for reliable public access
-    MEDIA_URL = '/media/'
-    DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
-else:
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = BASE_DIR / "mediafiles"
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    import boto3
+    try:
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_S3_REGION_NAME or 'us-east-1',
+        )
+        
+        # Enable public access by modifying public access block
+        s3_client.put_public_access_block(
+            Bucket=AWS_STORAGE_BUCKET_NAME,
+            PublicAccessBlockConfiguration={
+                'BlockPublicAcls': False,
+                'IgnorePublicAcls': False,
+                'BlockPublicPolicy': False,
+                'RestrictPublicBuckets': False
+            }
+        )
+        
+        # Set bucket policy for public read access
+        bucket_policy = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "s3:GetObject",
+                    "Resource": f"arn:aws:s3:::{AWS_STORAGE_BUCKET_NAME}/*"
+                }
+            ]
+        }
+        
+        import json
+        s3_client.put_bucket_policy(
+            Bucket=AWS_STORAGE_BUCKET_NAME, 
+            Policy=json.dumps(bucket_policy)
+        )
+        
+        print(f"Bucket public access configured for {AWS_STORAGE_BUCKET_NAME}")
+    except Exception as e:
+        print(f"Failed to configure bucket public access: {e}")
+
+# Static and Media files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' if AWS_ACCESS_KEY_ID else 'django.core.files.storage.FileSystemStorage'
 
 # Security Settings for Development
 SECURE_SSL_REDIRECT = False

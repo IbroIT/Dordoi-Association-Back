@@ -21,7 +21,10 @@ class Command(BaseCommand):
         self.stdout.write(f"AWS_S3_CUSTOM_DOMAIN: {settings.AWS_S3_CUSTOM_DOMAIN}")
         
         self.stdout.write(self.style.WARNING('\n=== Storage Configuration ==='))
-        self.stdout.write(f"DEFAULT_FILE_STORAGE: {settings.DEFAULT_FILE_STORAGE}")
+        if hasattr(settings, 'STORAGES'):
+            self.stdout.write(f"STORAGES (default backend): {settings.STORAGES.get('default', {}).get('BACKEND', 'NOT SET')}")
+        elif hasattr(settings, 'DEFAULT_FILE_STORAGE'):
+            self.stdout.write(f"DEFAULT_FILE_STORAGE: {settings.DEFAULT_FILE_STORAGE}")
         self.stdout.write(f"MEDIA_URL: {settings.MEDIA_URL}")
         
         from django.core.files.storage import default_storage

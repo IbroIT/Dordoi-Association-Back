@@ -143,6 +143,10 @@ dordoi-association-back/
 | `ALLOWED_HOSTS` | Разрешенные хосты | `localhost,127.0.0.1` |
 | `DATABASE_URL` | URL базы данных | SQLite локально, PostgreSQL на Heroku |
 | `CORS_ALLOWED_ORIGINS` | Разрешенные origins для CORS | `http://localhost:3000,http://localhost:5173` |
+| `BUCKETEER_AWS_ACCESS_KEY_ID` | AWS Access Key ID для S3 | - |
+| `BUCKETEER_AWS_REGION` | AWS регион для S3 | - |
+| `BUCKETEER_AWS_SECRET_ACCESS_KEY` | AWS Secret Access Key для S3 | - |
+| `BUCKETEER_BUCKET_NAME` | Имя S3 бакета | - |
 
 ## Разработка
 
@@ -162,6 +166,28 @@ python manage.py startapp app_name
 python manage.py test
 ```
 
-## Поддержка
+## Хранение файлов
 
-Для вопросов и поддержки обращайтесь к разработчикам проекта.
+Проект поддерживает два режима хранения медиа файлов:
+
+### 1. Локальное хранение (разработка)
+По умолчанию файлы хранятся локально в папке `mediafiles/`.
+
+### 2. AWS S3 (продакшн)
+При наличии переменных окружения для AWS S3, все медиа файлы автоматически сохраняются в облаке.
+
+**Настройка S3:**
+1. Добавьте Bucketeer addon: `heroku addons:create bucketeer`
+2. Или установите переменные вручную:
+   ```bash
+   heroku config:set BUCKETEER_AWS_ACCESS_KEY_ID=...
+   heroku config:set BUCKETEER_AWS_REGION=...
+   heroku config:set BUCKETEER_AWS_SECRET_ACCESS_KEY=...
+   heroku config:set BUCKETEER_BUCKET_NAME=...
+   ```
+
+**Преимущества S3:**
+- ✅ Надежное хранение
+- ✅ Автоматическое масштабирование
+- ✅ Доступность файлов через CDN
+- ✅ Резервное копирование

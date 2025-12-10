@@ -19,10 +19,11 @@
 - [ ] Set `DEBUG=False`
 - [ ] Configure `CORS_ALLOWED_ORIGINS` for frontend domain
 
-### 3. Database Configuration
-- [x] Add `dj-database-url` for database URL parsing
-- [x] Add `psycopg2-binary` for PostgreSQL support
-- [x] Configure database settings for Heroku
+### 3. AWS S3 Setup (Optional but Recommended)
+- [ ] Add Bucketeer addon: `heroku addons:create bucketeer`
+- [ ] Or set S3 environment variables manually
+- [ ] Verify S3 credentials are configured
+- [ ] Test file upload after deployment
 
 ## 🚀 Deployment Steps
 
@@ -162,6 +163,8 @@ heroku run bash
 - [ ] Static files load properly
 - [ ] Database connections work
 - [ ] CORS headers are correct
+- [ ] Media files upload to S3 (if configured)
+- [ ] File URLs are accessible from S3
 
 ## 📞 Support
 

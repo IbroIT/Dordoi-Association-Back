@@ -215,7 +215,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# Configure bucket for public access
+# Configure bucket for public access (Bucketeer-specific)
 if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
     import boto3
     try:
@@ -226,18 +226,18 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
             region_name=AWS_S3_REGION_NAME or 'us-east-1',
         )
         
-        # Enable public access by modifying public access block
+        # Enable public access for Bucketeer (keep ACLs disabled, allow bucket policies)
         s3_client.put_public_access_block(
             Bucket=AWS_STORAGE_BUCKET_NAME,
             PublicAccessBlockConfiguration={
-                'BlockPublicAcls': False,
-                'IgnorePublicAcls': False,
-                'BlockPublicPolicy': False,
+                'BlockPublicAcls': True,  # Keep ACLs disabled (Bucketeer requirement)
+                'IgnorePublicAcls': True,
+                'BlockPublicPolicy': False,  # Allow bucket policies
                 'RestrictPublicBuckets': False
             }
         )
         
-        # Set bucket policy for public read access
+        # Set bucket policy for public read access to all files
         bucket_policy = {
             "Version": "2012-10-17",
             "Statement": [
@@ -254,6 +254,23 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         s3_client.put_bucket_policy(
             Bucket=AWS_STORAGE_BUCKET_NAME, 
             Policy=json.dumps(bucket_policy)
+        )
+        
+        # Set CORS configuration
+        cors_config = {
+            'CORSRules': [
+                {
+                    'AllowedHeaders': ['*'],
+                    'ExposeHeaders': ['ETag', 'x-amz-meta-custom-header'],
+                    'AllowedMethods': ['HEAD', 'GET', 'PUT', 'POST', 'DELETE'],
+                    'AllowedOrigins': ['*']
+                }
+            ]
+        }
+        
+        s3_client.put_bucket_cors(
+            Bucket=AWS_STORAGE_BUCKET_NAME,
+            CORSConfiguration=cors_config
         )
         
         print(f"Bucket public access configured for {AWS_STORAGE_BUCKET_NAME}")

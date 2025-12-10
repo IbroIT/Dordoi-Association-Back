@@ -201,82 +201,26 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # WhiteNoise settings
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# AWS S3 Settings
+# AWS S3 Settings for Bucketeer
 AWS_ACCESS_KEY_ID = os.getenv('BUCKETEER_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKETEER_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION')
+AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION', 'eu-west-1')
+
 # Use region-specific endpoint for proper access
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3-{AWS_S3_REGION_NAME}.amazonaws.com' if AWS_S3_REGION_NAME else f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3-{AWS_S3_REGION_NAME}.amazonaws.com' if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME else None
+
+# S3 Configuration
 AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None
+AWS_DEFAULT_ACL = None  # Don't set ACLs (Bucketeer requirement)
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# Configure bucket for public access (Bucketeer-specific)
-if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
-    import boto3
-    try:
-        s3_client = boto3.client(
-            's3',
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            region_name=AWS_S3_REGION_NAME or 'us-east-1',
-        )
-        
-        # Enable public access for Bucketeer (keep ACLs disabled, allow bucket policies)
-        s3_client.put_public_access_block(
-            Bucket=AWS_STORAGE_BUCKET_NAME,
-            PublicAccessBlockConfiguration={
-                'BlockPublicAcls': True,  # Keep ACLs disabled (Bucketeer requirement)
-                'IgnorePublicAcls': True,
-                'BlockPublicPolicy': False,  # Allow bucket policies
-                'RestrictPublicBuckets': False
-            }
-        )
-        
-        # Set bucket policy for public read access to all files
-        bucket_policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": "*",
-                    "Action": "s3:GetObject",
-                    "Resource": f"arn:aws:s3:::{AWS_STORAGE_BUCKET_NAME}/*"
-                }
-            ]
-        }
-        
-        import json
-        s3_client.put_bucket_policy(
-            Bucket=AWS_STORAGE_BUCKET_NAME, 
-            Policy=json.dumps(bucket_policy)
-        )
-        
-        # Set CORS configuration
-        cors_config = {
-            'CORSRules': [
-                {
-                    'AllowedHeaders': ['*'],
-                    'ExposeHeaders': ['ETag', 'x-amz-meta-custom-header'],
-                    'AllowedMethods': ['HEAD', 'GET', 'PUT', 'POST', 'DELETE'],
-                    'AllowedOrigins': ['*']
-                }
-            ]
-        }
-        
-        s3_client.put_bucket_cors(
-            Bucket=AWS_STORAGE_BUCKET_NAME,
-            CORSConfiguration=cors_config
-        )
-        
-        print(f"Bucket public access configured for {AWS_STORAGE_BUCKET_NAME}")
-    except Exception as e:
-        print(f"Failed to configure bucket public access: {e}")
+# Bucket policy is configured via management command: python manage.py fix_s3_policy
+# This ensures public read access to all files
 
 # Static and Media files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

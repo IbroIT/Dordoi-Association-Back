@@ -200,26 +200,24 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # WhiteNoise settings
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media files
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"
-
 # AWS S3 Settings
 AWS_ACCESS_KEY_ID = os.getenv('BUCKETEER_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKETEER_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_USE_SSL = True
-AWS_S3_VERIFY = True
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None  # Remove default ACL to avoid issues with some S3-compatible services
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
 
-# Configure bucket for public access
+# Media files
 if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_USE_SSL = True
+    AWS_S3_VERIFY = True
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None  # Remove default ACL to avoid issues with some S3-compatible services
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    
+    # Configure bucket for public access
     import boto3
     try:
         s3_client = boto3.client(
@@ -262,10 +260,13 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         print(f"Bucket public access configured for {AWS_STORAGE_BUCKET_NAME}")
     except Exception as e:
         print(f"Failed to configure bucket public access: {e}")
-
-# Static and Media files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' if AWS_ACCESS_KEY_ID else 'django.core.files.storage.FileSystemStorage'
+    
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+else:
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "mediafiles"
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Security Settings for Development
 SECURE_SSL_REDIRECT = False

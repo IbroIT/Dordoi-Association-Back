@@ -51,7 +51,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING('\n=== PARTNERS ==='))
         for partner in Partner.objects.all():
             if partner.logo:
-                self.stdout.write(f"ID: {partner.id}, Name: {partner.name}")
+                self.stdout.write(f"ID: {partner.id}, Name: {partner.name_ru}")
                 self.stdout.write(f"Logo path: {partner.logo.name}")
                 self.stdout.write(f"Logo URL: {partner.logo.url}")
                 self.stdout.write('-' * 80)

@@ -10,8 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', "django-insecure-(4f8!eiec#)#e#cs)r1@p^_&1qzvsxdtw*^(gz-&2*nu)b4r(6")
+SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-(4f8!eiec#)#e#cs)r1@p^_&1qzvsxdtw*^(gz-&2*nu)b4r(6")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -81,16 +85,46 @@ REST_FRAMEWORK = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173').split(',')
-
-# Allow all origins for media files (images from S3)
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^https://.*\.s3\.amazonaws\.com$',
-    r'^https://.*\.s3\.eu-west-1\.amazonaws\.com$',
+CORS_ALLOWED_ORIGINS = [
+    "https://dordoi-association-henna.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173"
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for debugging
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # For development - allow all origins
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-cors-headers',
+    'content-disposition',
+    'content-length',
+    'cache-control',
+    'pragma',
+]
+
+# Additional CORS settings for file uploads
+CORS_EXPOSE_HEADERS = [
+    'content-type',
+    'content-length',
+]
 
 ROOT_URLCONF = "core.urls"
 
@@ -170,44 +204,118 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
-# AWS S3 Settings for media files
-AWS_ACCESS_KEY_ID = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('BUCKETEER_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('BUCKETEER_AWS_REGION')
+# AWS S3 Settings
+AWS_ACCESS_KEY_ID = os.getenv('BUCKETEER_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKETEER_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
-# S3 settings for public access
-AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None  # Remove default ACL to avoid issues with some S3-compatible services
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
-    'ACL': 'public-read'  # Explicitly set ACL for each object
 }
-AWS_S3_REGION_NAME = os.environ.get('BUCKETEER_AWS_REGION', 'eu-west-1')
-AWS_S3_SIGNATURE_VERSION = 's3v4'
 
-# Use S3 for media files if AWS credentials are provided
-if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
-    from .storage import PublicMediaStorage
-    DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# Configure bucket for public access
+if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
+    import boto3
+    try:
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_S3_REGION_NAME or 'us-east-1',
+        )
+        
+        # Enable public access by modifying public access block
+        s3_client.put_public_access_block(
+            Bucket=AWS_STORAGE_BUCKET_NAME,
+            PublicAccessBlockConfiguration={
+                'BlockPublicAcls': False,
+                'IgnorePublicAcls': False,
+                'BlockPublicPolicy': False,  # Allow bucket policies
+                'RestrictPublicBuckets': False
+            }
+        )
+        
+        # Set bucket policy for public read access
+        bucket_policy = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "s3:GetObject",
+                    "Resource": f"arn:aws:s3:::{AWS_STORAGE_BUCKET_NAME}/*"
+                }
+            ]
+        }
+        
+        import json
+        s3_client.put_bucket_policy(
+            Bucket=AWS_STORAGE_BUCKET_NAME, 
+            Policy=json.dumps(bucket_policy)
+        )
+        
+        print(f"Bucket public access configured for {AWS_STORAGE_BUCKET_NAME}")
+    except Exception as e:
+        print(f"Failed to configure bucket public access: {e}")
 
-    # Additional S3 settings for public access
-    AWS_QUERYSTRING_AUTH = False  # Remove query parameters from URLs
-    AWS_S3_SECURE_URLS = True
-    AWS_S3_USE_SSL = True
+# Static and Media files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' if AWS_ACCESS_KEY_ID else 'django.core.files.storage.FileSystemStorage'
 
-    # boto3 specific settings
-    AWS_S3_ADDRESSING_STYLE = 'virtual'
-else:
-    # Fallback to local storage in development
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'mediafiles'
+# Security Settings for Development
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'core.middleware': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'boto3': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'botocore': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'storages': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {

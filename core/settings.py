@@ -225,14 +225,30 @@ AWS_S3_OBJECT_PARAMETERS = {
 # Static and Media files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Set MEDIA_URL based on whether AWS is configured
+# Configure storage backends
 if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
+    # Use S3 for media files
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
+    # Use local filesystem
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Security Settings for Development
 SECURE_SSL_REDIRECT = False

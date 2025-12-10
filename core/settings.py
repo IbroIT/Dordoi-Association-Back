@@ -218,9 +218,13 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
         'CacheControl': 'max-age=86400',
     }
     
-    # Use direct S3 URLs for media files
+    # Use signed URLs for reliable access
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_QUERYSTRING_AUTH = True  # Enable signed URLs
+    AWS_S3_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB
+    
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = 'core.storage.PublicMediaStorage'
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "mediafiles"

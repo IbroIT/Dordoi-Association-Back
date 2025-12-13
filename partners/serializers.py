@@ -62,3 +62,5 @@ class PartnerSerializer(serializers.ModelSerializer):
 
     def get_features(self, obj):
         return obj.get_features(self.context.get("language", "ru"))
+    
+

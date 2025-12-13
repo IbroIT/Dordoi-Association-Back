@@ -24,6 +24,10 @@ urlpatterns = [
     path("api/", include("partners.urls")),
     path("health/", health_check, name="health_check"),
     path("media/<path:path>", serve_media, name="serve_media"),
+    path("api/", include("Banners.urls")),
+    path('api/gallery/', include('Gallery.urls')),
+    path('api/', include('contacts.urls')),
+
     path(
         "swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),

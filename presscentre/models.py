@@ -44,6 +44,7 @@ class Category(models.Model):
 
 class News(models.Model):
 
+    is_banner = models.BooleanField(default=False,verbose_name="Баннер",help_text="Отображать новость в виде баннера на главной странице",)
     category = models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,blank=True,related_name="news",verbose_name="Категория",)
 
     is_recommended = models.BooleanField(

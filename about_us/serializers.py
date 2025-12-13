@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FactCard, FactDetail, Leader
+from .models import FactCard, Leader
 
 
 class LeaderSerializer(serializers.ModelSerializer):
@@ -53,27 +53,15 @@ class LocalizationSerializerMixin:
         return "ru"
 
 
-class FactDetailSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
-    detail = serializers.SerializerMethodField()
-
-    class Meta:
-        model = FactDetail
-        fields = ["id", "detail"]
-        read_only_fields = ["id"]
-
-    def get_detail(self, obj):
-        language = self._get_language()
-        return obj.get_detail(language=language)
-
 
 class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    details = FactDetailSerializer(many=True, read_only=True)
+    details = serializers.SerializerMethodField()
 
     class Meta:
         model = FactCard
-        fields = ["id", "icon", "title", "description", "details"]
+        fields = ["id", "icon", "title", "description", "details", "is_banner"]
         read_only_fields = ["id"]
 
     def get_title(self, obj):
@@ -95,3 +83,7 @@ class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerialize
             return obj.description_en.strip()
 
         return ""
+
+    def get_details(self, obj):
+        language = self._get_language()
+        return obj.get_detail(language=language)

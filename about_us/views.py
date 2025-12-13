@@ -2,8 +2,8 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import FactCard, FactDetail,Leader
-from .serializers import FactCardSerializer, FactDetailSerializer,LeaderSerializer
+from .models import FactCard, Leader
+from .serializers import FactCardSerializer,LeaderSerializer
 from rest_framework import generics
 
 
@@ -48,6 +48,14 @@ class LocalizationMixin:
         return context
 
 
+class BannerFact(LocalizationMixin, generics.ListAPIView):
+    """
+    View для получения списка факт-карт, отмеченных как баннеры
+    Поддерживает параметр lang для выбора языка (ru, en, kg)
+    """
+    queryset = FactCard.objects.filter(is_banner=True).order_by("id")
+    serializer_class = FactCardSerializer
+
 class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     """
     ViewSet для получения факт-карт с деталями.
@@ -58,7 +66,7 @@ class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     - search: поиск по названию и описанию
     """
 
-    queryset = FactCard.objects.prefetch_related("details").all().order_by("id")
+    queryset = FactCard.objects.all().order_by("id")
     serializer_class = FactCardSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = [
@@ -68,21 +76,9 @@ class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
         "description_en",
         "description_ru",
         "description_kg",
+        "detail_en",
+        "detail_ru",
+        "detail_kg",
     ]
     ordering_fields = ["id", "title_ru", "title_en", "title_kg"]
 
-
-class FactDetailViewSet(LocalizationMixin, ReadOnlyModelViewSet):
-    """
-    ViewSet для получения деталей фактов.
-
-    Query Parameters:
-    - lang: ru, en, kg (язык ответа)
-    - card: ID факт-карты (фильтр)
-    """
-
-    queryset = FactDetail.objects.select_related("card").all().order_by("id")
-    serializer_class = FactDetailSerializer
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["card"]
-    ordering_fields = ["id", "card"]

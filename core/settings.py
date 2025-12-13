@@ -59,6 +59,9 @@ INSTALLED_APPS = [
     "about_us",
     "partners",
     "core",
+    "Banners",
+    "contacts",
+    'Gallery',
 ]
 
 

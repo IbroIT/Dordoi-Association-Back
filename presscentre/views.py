@@ -3,7 +3,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework import generics
 from .models import Category, News
 from .serializers import CategorySerializer, NewsSerializer
 
@@ -30,6 +30,11 @@ class CategoryViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     search_fields = ["title_en", "title_ru", "title_kg", "slug"]
     ordering_fields = ["id", "title_ru", "title_en", "title_kg"]
 
+
+class BannerNewsViewSet(LocalizationMixin,generics.ListAPIView):
+
+    queryset = News.objects.filter(is_banner=True)
+    serializer_class = NewsSerializer
 
 class NewsViewSet(LocalizationMixin, ReadOnlyModelViewSet):
 

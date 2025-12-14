@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FactCard, Leader, History
+from .models import FactCard, Leader, History, Structure
 
 
 class LeaderSerializer(serializers.ModelSerializer):
@@ -11,15 +11,7 @@ class LeaderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Leader
-        fields = [
-            'id',
-            'photo',
-            'name',
-            'position',
-            'bio',
-            'achievements',
-            'education'
-        ]
+        fields = ["id", "photo", "name", "position", "bio", "achievements", "education"]
 
     def get_name(self, obj):
         return obj.get_name(self.context.get("language", "ru"))
@@ -36,6 +28,7 @@ class LeaderSerializer(serializers.ModelSerializer):
     def get_education(self, obj):
         return obj.get_education(self.context.get("language", "ru"))
 
+
 class LocalizationSerializerMixin:
     """Миксин для локализации сериализаторов"""
 
@@ -51,7 +44,6 @@ class LocalizationSerializerMixin:
                 or "ru"
             )
         return "ru"
-
 
 
 class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
@@ -101,3 +93,42 @@ class HistorySerializer(LocalizationSerializerMixin, serializers.ModelSerializer
         language = self._get_language()
         field_name = f"description_{language}"
         return getattr(obj, field_name, obj.description_ru)
+
+
+class StructureSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    short_description = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    achievements = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Structure
+        fields = [
+            "id",
+            "slug",
+            "logo",
+            "name",
+            "short_description",
+            "description",
+            "founded_year",
+            "achievements",
+            "address",
+            "email",
+            "phone",
+            "website",
+            "order",
+        ]
+        read_only_fields = ["id"]
+        lookup_field = "slug"
+
+    def get_name(self, obj):
+        return obj.get_name(language=self._get_language())
+
+    def get_short_description(self, obj):
+        return obj.get_short_description(language=self._get_language())
+
+    def get_description(self, obj):
+        return obj.get_description(language=self._get_language())
+
+    def get_achievements(self, obj):
+        return obj.get_achievements(language=self._get_language())

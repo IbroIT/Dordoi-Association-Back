@@ -146,3 +146,77 @@ class History(models.Model):
 
     def get_description(self, language="ru"):
         return getattr(self, f"description_{language}", self.description_ru)
+
+
+class Structure(models.Model):
+    """
+    Структурные подразделения ассоциации
+    """
+
+    slug = models.SlugField(max_length=255, unique=True, verbose_name="Slug (URL)")
+
+    logo = models.ImageField(upload_to="subsidiaries/logos/", verbose_name="Логотип")
+
+    name_en = models.CharField(max_length=255, verbose_name="Название (EN)")
+    name_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
+    name_kg = models.CharField(max_length=255, verbose_name="Название (KG)")
+
+    short_description_en = models.TextField(verbose_name="Краткое описание (EN)")
+    short_description_ru = models.TextField(verbose_name="Краткое описание (RU)")
+    short_description_kg = models.TextField(verbose_name="Краткое описание (KG)")
+
+    description_en = models.TextField(verbose_name="Полное описание (EN)")
+    description_ru = models.TextField(verbose_name="Полное описание (RU)")
+    description_kg = models.TextField(verbose_name="Полное описание (KG)")
+
+    founded_year = models.IntegerField(verbose_name="Год основания")
+
+    achievements_en = models.JSONField(
+        verbose_name="Достижения (EN)",
+        default=list,
+        help_text="Список достижений на английском",
+    )
+    achievements_ru = models.JSONField(
+        verbose_name="Достижения (RU)",
+        default=list,
+        help_text="Список достижений на русском",
+    )
+    achievements_kg = models.JSONField(
+        verbose_name="Достижения (KG)",
+        default=list,
+        help_text="Список достижений на кыргызском",
+    )
+
+    address = models.CharField(max_length=500, verbose_name="Адрес", blank=True)
+    email = models.EmailField(verbose_name="Email", blank=True)
+    phone = models.CharField(max_length=50, verbose_name="Телефон", blank=True)
+    website = models.URLField(verbose_name="Веб-сайт", blank=True)
+
+    order = models.IntegerField(default=0, verbose_name="Порядок отображения")
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Структурное подразделение"
+        verbose_name_plural = "Структура"
+        ordering = ["order", "name_ru"]
+
+    def __str__(self):
+        return self.get_name()
+
+    def get_name(self, language="ru"):
+        field_name = f"name_{language}"
+        return getattr(self, field_name, self.name_ru)
+
+    def get_short_description(self, language="ru"):
+        field_name = f"short_description_{language}"
+        return getattr(self, field_name, self.short_description_ru)
+
+    def get_description(self, language="ru"):
+        field_name = f"description_{language}"
+        return getattr(self, field_name, self.description_ru)
+
+    def get_achievements(self, language="ru"):
+        field_name = f"achievements_{language}"
+        return getattr(self, field_name, self.achievements_ru)

@@ -2,8 +2,13 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import FactCard, Leader, History
-from .serializers import FactCardSerializer, LeaderSerializer, HistorySerializer
+from .models import FactCard, Leader, History, Structure
+from .serializers import (
+    FactCardSerializer,
+    LeaderSerializer,
+    HistorySerializer,
+    StructureSerializer,
+)
 from rest_framework import generics
 
 
@@ -98,3 +103,28 @@ class HistoryViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     queryset = History.objects.all().order_by("order")
     serializer_class = HistorySerializer
     ordering_fields = ["order"]
+
+
+class StructureViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+    """
+    Read-only viewset для структурных подразделений
+    Поддерживает параметр ?lang=ru|en|kg
+    Поиск по slug: /api/about-us/structure/dordoi-trade/
+    """
+
+    queryset = Structure.objects.all().order_by("order")
+    serializer_class = StructureSerializer
+    lookup_field = "slug"
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = [
+        "name_en",
+        "name_ru",
+        "name_kg",
+        "short_description_en",
+        "short_description_ru",
+        "short_description_kg",
+        "description_en",
+        "description_ru",
+        "description_kg",
+    ]
+    ordering_fields = ["order", "founded_year", "name_ru"]

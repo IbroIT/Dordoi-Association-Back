@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import FactCardViewSet, BannerFact, HistoryViewSet
+from .views import FactCardViewSet, BannerFact, HistoryViewSet, StructureViewSet
 from django.urls import path, include
 from . import views
 
@@ -8,6 +8,7 @@ app_name = "about_us"
 router = DefaultRouter()
 router.register(r"facts", FactCardViewSet, basename="fact-card")
 router.register(r"history", HistoryViewSet, basename="history")
+router.register(r"structure", StructureViewSet, basename="structure")
 
 
 urlpatterns = [

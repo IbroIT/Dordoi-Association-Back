@@ -46,3 +46,20 @@
     ]
 }
 ```
+
+## about us history
+
+### history list
+
+```http
+/api/about-us/history/
+```
+
+```json
+{
+        "id": 1,
+        "description": "adfesfagsdfadgshd",
+        "image": "http://127.0.0.1:8000/media/history/d7d4704ee1caa586fc73c71ea47d7041.jpg",
+        "order": 0
+}
+```

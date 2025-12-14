@@ -2,8 +2,8 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import FactCard, Leader
-from .serializers import FactCardSerializer,LeaderSerializer
+from .models import FactCard, Leader,HistoryMilestone
+from .serializers import FactCardSerializer,LeaderSerializer, HistoryMilestoneSerializer
 from rest_framework import generics
 
 
@@ -82,3 +82,6 @@ class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     ]
     ordering_fields = ["id", "title_ru", "title_en", "title_kg"]
 
+class HistoryMilestoneListView(LocalizationMixin, generics.ListAPIView):
+    queryset = HistoryMilestone.objects.all()
+    serializer_class = HistoryMilestoneSerializer

@@ -75,3 +75,16 @@ class Leader(models.Model):
     def get_education(self, language="ru"):
         return getattr(self, f"education_{language}", self.education_ru)
     
+# history section 
+class HistoryMilestone(models.Model):
+
+    description_ru = models.TextField()
+    description_en = models.TextField()
+    description_kg = models.TextField()
+    
+    image = models.ImageField(upload_to="history/")
+    
+    order = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['order']

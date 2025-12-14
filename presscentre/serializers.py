@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, News, Publication
+from .models import Category, News, Publication, PublicationCategory
 
 
 class LocalizationSerializerMixin:
@@ -70,8 +70,23 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
         return obj.get_short_description(language=language)
 
 
+class PublicationCategorySerializer(
+    LocalizationSerializerMixin, serializers.ModelSerializer
+):
+    title = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PublicationCategory
+        fields = ["id", "title"]
+        read_only_fields = ["id"]
+
+    def get_title(self, obj):
+        language = self._get_language()
+        return obj.get_title(language=language)
+
+
 class PublicationSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = PublicationCategorySerializer(read_only=True)
     title = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()

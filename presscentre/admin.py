@@ -1,11 +1,17 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from .models import Category, News, Publication
+from .models import Category, News, Publication, PublicationCategory
 
 
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):
     pass
+
+
+@admin.register(PublicationCategory)
+class PublicationCategoryAdmin(ModelAdmin):
+    list_display = ["id", "title_ru", "title_en", "title_kg"]
+    search_fields = ["title_ru", "title_en", "title_kg"]
 
 
 @admin.register(News)

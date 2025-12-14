@@ -4,8 +4,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
-from .models import Category, News, Publication
-from .serializers import CategorySerializer, NewsSerializer, PublicationSerializer
+from .models import Category, News, Publication, PublicationCategory
+from .serializers import (
+    CategorySerializer,
+    NewsSerializer,
+    PublicationSerializer,
+    PublicationCategorySerializer,
+)
 
 
 class LocalizationMixin:
@@ -92,3 +97,16 @@ class PublicationViewSet(LocalizationMixin, ReadOnlyModelViewSet):
         "author",
     ]
     ordering_fields = ["published_at", "created_at", "title_ru"]
+
+
+class PublicationCategoryViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+    """
+    Read-only API для категорий публикаций
+    Поддерживает: ?lang=ru|en|kg
+    """
+
+    queryset = PublicationCategory.objects.all().order_by("id")
+    serializer_class = PublicationCategorySerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["title_en", "title_ru", "title_kg"]
+    ordering_fields = ["id", "title_ru", "title_en", "title_kg"]

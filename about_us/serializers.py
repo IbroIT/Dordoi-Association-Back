@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FactCard, Leader, HistoryMilestone
+from .models import FactCard, Leader, History
 
 
 class LeaderSerializer(serializers.ModelSerializer):
@@ -89,11 +89,11 @@ class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerialize
         return obj.get_detail(language=language)
 
 
-class HistoryMilestoneSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
+class HistorySerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
 
     class Meta:
-        model = HistoryMilestone
+        model = History
         fields = ["id", "description", "image", "order"]
         read_only_fields = ["id"]
 

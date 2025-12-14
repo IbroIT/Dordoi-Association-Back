@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import FactCardViewSet, BannerFact,HistoryMilestoneListView
+from .views import FactCardViewSet, BannerFact,HistoryListView
 from django.urls import path, include
 from . import views
 
@@ -13,5 +13,5 @@ urlpatterns = [
     path('fact_banners/', BannerFact.as_view(), name='banner-facts'),
     path('leaders/', views.LeaderListView.as_view(), name='leader-list'),
     path('leaders/<int:id>/', views.LeaderDetailView.as_view(), name='leader-detail'),
-    path('history/',HistoryMilestoneListView.as_view(),name='history-list')
+    path('history/',HistoryListView.as_view(),name='history-list')
 ]

@@ -76,7 +76,7 @@ class Leader(models.Model):
         return getattr(self, f"education_{language}", self.education_ru)
     
 # history section 
-class HistoryMilestone(models.Model):
+class History(models.Model):
 
     description_ru = models.TextField()
     description_en = models.TextField()
@@ -88,3 +88,11 @@ class HistoryMilestone(models.Model):
     
     class Meta:
         ordering = ['order']
+        verbose_name = "Историческая веха"
+        verbose_name_plural = "История"
+    
+    def __str__(self):
+        return f"{self.order}. {self.description_ru[:50]}..."
+    
+    def get_description(self, language="ru"):
+        return getattr(self, f"description_{language}", self.description_ru)

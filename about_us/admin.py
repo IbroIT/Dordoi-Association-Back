@@ -1,6 +1,6 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from .models import FactCard ,Leader
+from .models import FactCard ,Leader,HistoryMilestone
 
 
 @admin.register(FactCard)
@@ -42,3 +42,26 @@ class FactCardAdmin(ModelAdmin):
 @admin.register(Leader)
 class LeaderAdmin(ModelAdmin):
     pass
+
+
+@admin.register(HistoryMilestone)
+class HistoryMilestoneAdmin(ModelAdmin):
+    list_display = ['order', 'get_short_description']
+    list_editable = ['order']
+    ordering = ['order']
+    
+    fieldsets = (
+        ('Порядок', {
+            'fields': ('order',)
+        }),
+        ('Изображение', {
+            'fields': ('image',)
+        }),
+        ('Описание', {
+            'fields': ('description_ru', 'description_en', 'description_kg')
+        }),
+    )
+    
+    def get_short_description(self, obj):
+        return obj.description_ru[:50] + '...' if len(obj.description_ru) > 50 else obj.description_ru
+    get_short_description.short_description = 'Описание (RU)'

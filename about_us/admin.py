@@ -1,6 +1,6 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from .models import FactCard ,Leader,HistoryMilestone
+from .models import FactCard ,Leader,History
 
 
 @admin.register(FactCard)
@@ -44,9 +44,10 @@ class LeaderAdmin(ModelAdmin):
     pass
 
 
-@admin.register(HistoryMilestone)
-class HistoryMilestoneAdmin(ModelAdmin):
+@admin.register(History)
+class HistoryAdmin(ModelAdmin):
     list_display = ['order', 'get_short_description']
+    list_display_links = ['get_short_description']
     list_editable = ['order']
     ordering = ['order']
     

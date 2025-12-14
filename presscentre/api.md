@@ -42,3 +42,38 @@
   }
 }
 ```
+
+## publications part
+
+### Publication Category List
+```http
+/api/presscentre/publication-categories/
+```
+```json
+    {
+        "id": 1,
+        "title": "Заголовок (RU):"
+    }
+```
+
+### Publication List
+```http
+/api/presscentre/publications/
+```
+```json
+    {
+        "id": 1,
+        "title": "Заголовок (RU):",
+        "short_description": "wefawef",
+        "description": "fawefawef",
+        "author": "dawedawed",
+        "pdf_file": "http://127.0.0.1:8000/media/publications/pdfs/sonic_ring_2.mp3",
+        "published_at": "2025-12-14",
+        "created_at": "2025-12-14T13:21:39.276825Z",
+        "updated_at": "2025-12-14T13:21:39.276848Z",
+        "category": {
+            "id": 1,
+            "title": "Заголовок (RU):"
+        }
+    }
+```

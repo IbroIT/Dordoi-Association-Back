@@ -16,10 +16,12 @@ class Category(models.Model):
     def get_name(self, language="ru"):
         return getattr(self, f"name_{language}", self.name_ru)
 
-
 class Gallery(models.Model):   
-    image = models.ImageField(upload_to="gallery/", verbose_name="Изображение")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="images", verbose_name="Категория")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="galleries", verbose_name="Категория")
+
+class Photos(models.Model):
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name="photos", verbose_name="Галерея")
+    image = models.ImageField(upload_to="gallery/photos/", verbose_name="Фото")
 
     class Meta:
         verbose_name = "Изображение галереи"

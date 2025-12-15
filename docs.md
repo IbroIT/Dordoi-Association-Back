@@ -90,13 +90,21 @@ res -- galleries
 [
 	{
 		"id": 1,
-		"image": "https://bucketeer-8676b90e-ab51-4272-9cee-1824a2d6c0ea.s3-eu-west-1.amazonaws.com/gallery/gallery.png",
+		"title_en": "Gallery Title",
+		"title_kg": "Галереянын аталышы",
+		"title_ru": "Название галереи",
 		"category": {
 			"id": 1,
 			"name_en": "Culture",
 			"name_kg": "Маданият",
 			"name_ru": "Культура"
-		}
+		},
+		"photos": [
+			{
+				"id": 1,
+				"image": "https://bucketeer-8676b90e-ab51-4272-9cee-1824a2d6c0ea.s3-eu-west-1.amazonaws.com/gallery/gallery.png"
+			}
+		]
 	}
 ]
 ```

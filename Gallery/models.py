@@ -16,10 +16,26 @@ class Category(models.Model):
     def get_name(self, language="ru"):
         return getattr(self, f"name_{language}", self.name_ru)
 
-
 class Gallery(models.Model):   
-    image = models.ImageField(upload_to="gallery/", verbose_name="Изображение")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="images", verbose_name="Категория")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="galleries", verbose_name="Категория")
+    title_en = models.CharField(max_length=255, blank=True, verbose_name="Заголовок (en)")
+    title_kg = models.CharField(max_length=255, blank=True, verbose_name="Заголовок (kg)")
+    title_ru = models.CharField(max_length=255, blank=True, verbose_name="Заголовок (ru)")
+
+    class Meta:
+        verbose_name = "Галерея"
+        verbose_name_plural = "Галереи"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.get_title() or f"Gallery {self.id}"
+    
+    def get_title(self, language="ru"):
+        return getattr(self, f"title_{language}", self.title_ru) or f"Gallery {self.id}"
+
+class Photos(models.Model):
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, related_name="photos", verbose_name="Галерея")
+    image = models.ImageField(upload_to="gallery/photos/", verbose_name="Фото")
 
     class Meta:
         verbose_name = "Изображение галереи"
@@ -27,4 +43,4 @@ class Gallery(models.Model):
         ordering = ["id"]
 
     def __str__(self):
-        return f"Image {self.id} in category {self.category.get_name()}"
+        return f"Image {self.id} in gallery {self.gallery}"

@@ -1,27 +1,32 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import Category, Gallery
+from .models import Category, Gallery, Photos
 
-# Просто добавляем возможность загружать несколько фото к категории
+# Inline для добавления галерей к категории
 class GalleryInline(admin.TabularInline):
     model = Gallery
+    extra = 1  # 1 пустая форма для добавления галереи
+    fields = ['title_ru', 'title_en', 'title_kg']
+
+# Inline для добавления фото к галерее
+class PhotosInline(admin.TabularInline):
+    model = Photos
     extra = 3  # 3 пустые формы для добавления фото
+    fields = ['image']
 
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):
-      # Здесь можно добавлять фото к категории
-    list_display = ['name_ru', 'image_count']
-    
-    def image_count(self, obj):
-        return obj.images.count()
+    inlines = [GalleryInline]  # Здесь можно добавлять галереи к категории
+    list_display = ['name_ru', 'name_en', 'name_kg']
 
 @admin.register(Gallery)
 class GalleryAdmin(ModelAdmin):
-    inlines = [GalleryInline]
-    list_display = ['id', 'category', 'image_preview']
+    inlines = [PhotosInline]
+    list_display = ['title_ru', 'category', 'photo_count']
+    list_filter = ['category']
+    search_fields = ['title_ru', 'category__name_ru']
     
-    def image_preview(self, obj):
-        if obj.image:
-            return f'<img src="{obj.image.url}" style="max-height: 50px;" />'
-        return "Нет изображения"
-    image_preview.allow_tags = True
+    def photo_count(self, obj):
+        return obj.photos.count()
+    photo_count.short_description = "Количество фото"
+    

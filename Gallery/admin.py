@@ -9,10 +9,19 @@ class GalleryInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(ModelAdmin):
-    pass
+      # Здесь можно добавлять фото к категории
+    list_display = ['name_ru', 'image_count']
+    
+    def image_count(self, obj):
+        return obj.images.count()
 
 @admin.register(Gallery)
 class GalleryAdmin(ModelAdmin):
-    inlines = [GalleryInline]  # Здесь можно добавлять фото к категории
-    list_display = ['name', 'image_count']
+    inlines = [GalleryInline]
+    list_display = ['id', 'category', 'image_preview']
     
+    def image_preview(self, obj):
+        if obj.image:
+            return f'<img src="{obj.image.url}" style="max-height: 50px;" />'
+        return "Нет изображения"
+    image_preview.allow_tags = True

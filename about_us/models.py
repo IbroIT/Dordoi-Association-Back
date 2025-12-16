@@ -169,22 +169,22 @@ class Structure(models.Model):
     description_ru = models.TextField(verbose_name="Полное описание (RU)")
     description_kg = models.TextField(verbose_name="Полное описание (KG)")
 
-    founded_year = models.IntegerField(verbose_name="Год основания")
+    founded_year = models.IntegerField(verbose_name="Год основания", null=True, blank=True)
 
     achievements_en = models.JSONField(
         verbose_name="Достижения (EN)",
         default=list,
-        help_text="Список достижений на английском",
+        help_text="Список достижений на английском", null=True, blank=True
     )
     achievements_ru = models.JSONField(
         verbose_name="Достижения (RU)",
         default=list,
-        help_text="Список достижений на русском",
+        help_text="Список достижений на русском",null=True, blank=True
     )
     achievements_kg = models.JSONField(
         verbose_name="Достижения (KG)",
         default=list,
-        help_text="Список достижений на кыргызском",
+        help_text="Список достижений на кыргызском",null=True, blank=True
     )
 
     address = models.CharField(max_length=500, verbose_name="Адрес", blank=True)

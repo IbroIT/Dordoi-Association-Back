@@ -11,13 +11,13 @@ class Banner(models.Model):
     idea_kg = models.CharField(max_length=255, verbose_name="Идея  баннера (kg)", null=True, blank=True)
     idea_ru = models.CharField(max_length=255, verbose_name="Идея  баннера (ru)", null=True, blank=True)
 
-
-
     link_url = models.URLField(max_length=500, verbose_name="Ссылка для кнопки(необязательно)", blank=True, null=True)
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок отображения")
 
     class Meta:
         verbose_name = "Баннер"
         verbose_name_plural = "Баннеры"
+        ordering = ["order"]
 
     def __str__(self):
         return self.title_ru

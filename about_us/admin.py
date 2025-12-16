@@ -20,7 +20,6 @@ class FactCardAdmin(ModelAdmin):
             "Описание",
             {"fields": ("description_en", "description_ru", "description_kg")},
         ),
-        ("Деталь", {"fields": ("detail_en", "detail_ru", "detail_kg")}),
     )
 
     def get_fieldsets(self, request, obj=None):

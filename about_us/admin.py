@@ -8,13 +8,12 @@ class FactCardAdmin(ModelAdmin):
     fieldsets = (
         ("Основное", {"fields": ("is_banner",)}),
         (
-            "Фото баннера",
+            "Фото",
             {
                 "fields": ("photo",),
                 "classes": ("collapse",),
             },
         ),
-        ("Иконка", {"fields": ("icon",)}),
         ("Заголовок", {"fields": ("title_en", "title_ru", "title_kg")}),
         (
             "Описание",
@@ -26,7 +25,7 @@ class FactCardAdmin(ModelAdmin):
         fieldsets = super().get_fieldsets(request, obj)
         if obj and not obj.is_banner:
             # Если is_banner=False, скрываем поле photo
-            fieldsets = [fs for fs in fieldsets if fs[0] != "Фото баннера"]
+            fieldsets = [fs for fs in fieldsets if fs[0] != "Фото"]
         return fieldsets
 
 

@@ -9,13 +9,11 @@ class FactCard(models.Model):
     is_banner = models.BooleanField(default=False, verbose_name="Является баннером?")
 
     photo = models.ImageField(
-        upload_to="fact_cards/banners/",
-        verbose_name="Вставьте фото только если этот факт должен быть баннером",
+        upload_to="fact_cards/",
+        verbose_name="Фото",
         blank=True,
         null=True,
     )
-
-    icon = models.ImageField(upload_to="fact_cards/", verbose_name="Иконка")
 
     title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
     title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
@@ -29,6 +27,10 @@ class FactCard(models.Model):
         verbose_name = "Факт-карта"
         verbose_name_plural = "Факт-карты"
         ordering = ["id"]
+
+    def clean(self):
+        if self.is_banner and not self.photo:
+            raise ValidationError("Для баннеров обязательно нужно загрузить фото.")
 
     def __str__(self):
         return self.get_title()

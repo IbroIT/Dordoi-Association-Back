@@ -52,7 +52,7 @@ class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerialize
 
     class Meta:
         model = FactCard
-        fields = ["id", "icon", "title", "description", "is_banner"]
+        fields = ["id", "photo", "title", "description", "is_banner"]
         read_only_fields = ["id"]
 
     def get_title(self, obj):

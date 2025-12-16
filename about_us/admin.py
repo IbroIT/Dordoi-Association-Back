@@ -11,7 +11,7 @@ class FactCardAdmin(ModelAdmin):
             "Фото",
             {
                 "fields": ("photo",),
-                "classes": ("collapse",),
+                "description": "Фото обязательно для баннеров. Для обычных фактов можно оставить пустым.",
             },
         ),
         ("Заголовок", {"fields": ("title_en", "title_ru", "title_kg")}),
@@ -20,13 +20,6 @@ class FactCardAdmin(ModelAdmin):
             {"fields": ("description_en", "description_ru", "description_kg")},
         ),
     )
-
-    def get_fieldsets(self, request, obj=None):
-        fieldsets = super().get_fieldsets(request, obj)
-        if obj and not obj.is_banner:
-            # Если is_banner=False, скрываем поле photo
-            fieldsets = [fs for fs in fieldsets if fs[0] != "Фото"]
-        return fieldsets
 
 
 @admin.register(Leader)

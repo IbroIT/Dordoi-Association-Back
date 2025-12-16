@@ -25,10 +25,6 @@ class FactCard(models.Model):
     description_ru = models.TextField(verbose_name="Описание (RU)")
     description_kg = models.TextField(verbose_name="Описание (KG)")
 
-    detail_en = models.CharField(max_length=255, verbose_name="Деталь (EN)")
-    detail_ru = models.CharField(max_length=255, verbose_name="Деталь (RU)")
-    detail_kg = models.CharField(max_length=255, verbose_name="Деталь (KG)")
-
     class Meta:
         verbose_name = "Факт-карта"
         verbose_name_plural = "Факт-карты"
@@ -42,9 +38,6 @@ class FactCard(models.Model):
 
     def get_description(self, language="ru"):
         return getattr(self, f"description_{language}", self.description_ru)
-
-    def get_detail(self, language="ru"):
-        return getattr(self, f"detail_{language}", self.detail_ru)
 
 
 class Leader(models.Model):

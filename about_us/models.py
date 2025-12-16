@@ -174,17 +174,23 @@ class Structure(models.Model):
     achievements_en = models.JSONField(
         verbose_name="Достижения (EN)",
         default=list,
-        help_text="Список достижений на английском", null=True, blank=True,
+        help_text="Список достижений на английском",
+        null=True,
+        blank=True,
     )
     achievements_ru = models.JSONField(
         verbose_name="Достижения (RU)",
         default=list,
-        help_text="Список достижений на русском", null=True, blank=True,
+        help_text="Список достижений на русском",
+        null=True,
+        blank=True,
     )
     achievements_kg = models.JSONField(
         verbose_name="Достижения (KG)",
         default=list,
-        help_text="Список достижений на кыргызском", null=True, blank=True,
+        help_text="Список достижений на кыргызском",
+        null=True,
+        blank=True,
     )
 
     address = models.CharField(max_length=500, verbose_name="Адрес", blank=True)
@@ -219,4 +225,5 @@ class Structure(models.Model):
 
     def get_achievements(self, language="ru"):
         field_name = f"achievements_{language}"
-        return getattr(self, field_name, self.achievements_ru)
+        achievements = getattr(self, field_name, None)
+        return achievements if achievements is not None else []

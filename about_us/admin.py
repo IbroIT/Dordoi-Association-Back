@@ -105,3 +105,14 @@ class StructureAdmin(ModelAdmin):
         ),
         ("Контактная информация", {"fields": ("address", "email", "phone", "website")}),
     )
+
+    def save_model(self, request, obj, form, change):
+        # Ensure achievements fields are lists, not None
+        if obj.achievements_en is None:
+            obj.achievements_en = []
+        if obj.achievements_ru is None:
+            obj.achievements_ru = []
+        if obj.achievements_kg is None:
+            obj.achievements_kg = []
+        
+        super().save_model(request, obj, form, change)

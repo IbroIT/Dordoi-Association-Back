@@ -49,7 +49,6 @@ class LocalizationSerializerMixin:
 class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    details = serializers.SerializerMethodField()
 
     class Meta:
         model = FactCard

@@ -94,9 +94,7 @@ class HistorySerializer(LocalizationSerializerMixin, serializers.ModelSerializer
 
 class StructureSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
-    short_description = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    achievements = serializers.SerializerMethodField()
 
     class Meta:
         model = Structure
@@ -105,14 +103,10 @@ class StructureSerializer(LocalizationSerializerMixin, serializers.ModelSerializ
             "slug",
             "logo",
             "name",
-            "short_description",
             "description",
-            "founded_year",
-            "achievements",
             "address",
             "email",
             "phone",
-            "website",
             "order",
         ]
         read_only_fields = ["id"]
@@ -121,11 +115,7 @@ class StructureSerializer(LocalizationSerializerMixin, serializers.ModelSerializ
     def get_name(self, obj):
         return obj.get_name(language=self._get_language())
 
-    def get_short_description(self, obj):
-        return obj.get_short_description(language=self._get_language())
-
     def get_description(self, obj):
-        return obj.get_description(language=self._get_language())
-
-    def get_achievements(self, obj):
-        return obj.get_achievements(language=self._get_language())
+        language = self._get_language()
+        # Получаем RichText content и возвращаем как есть (с HTML тегами)
+        return obj.get_description(language=language)

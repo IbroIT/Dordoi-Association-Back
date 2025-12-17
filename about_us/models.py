@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # Create your models here.
 
@@ -154,47 +155,16 @@ class Structure(models.Model):
     name_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
     name_kg = models.CharField(max_length=255, verbose_name="Название (KG)")
 
-    short_description_en = models.TextField(verbose_name="Краткое описание (EN)")
-    short_description_ru = models.TextField(verbose_name="Краткое описание (RU)")
-    short_description_kg = models.TextField(verbose_name="Краткое описание (KG)")
-
-    description_en = models.TextField(verbose_name="Полное описание (EN)")
-    description_ru = models.TextField(verbose_name="Полное описание (RU)")
-    description_kg = models.TextField(verbose_name="Полное описание (KG)")
-
-    founded_year = models.IntegerField(verbose_name="Год основания", null=True, blank=True, )
-
-    achievements_en = models.JSONField(
-        verbose_name="Достижения (EN)",
-        default=list,
-        help_text="Список достижений на английском",
-        null=True,
-        blank=True,
-    )
-    achievements_ru = models.JSONField(
-        verbose_name="Достижения (RU)",
-        default=list,
-        help_text="Список достижений на русском",
-        null=True,
-        blank=True,
-    )
-    achievements_kg = models.JSONField(
-        verbose_name="Достижения (KG)",
-        default=list,
-        help_text="Список достижений на кыргызском",
-        null=True,
-        blank=True,
-    )
+    description_ru = RichTextUploadingField(null=True, blank=True)
+    description_en = RichTextUploadingField(null=True, blank=True)
+    description_kg = RichTextUploadingField(null=True, blank=True)
 
     address = models.CharField(max_length=500, verbose_name="Адрес", blank=True)
     email = models.EmailField(verbose_name="Email", blank=True)
     phone = models.CharField(max_length=50, verbose_name="Телефон", blank=True)
-    website = models.URLField(verbose_name="Веб-сайт", blank=True)
 
     order = models.IntegerField(default=0, verbose_name="Порядок отображения")
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         verbose_name = "Структурное подразделение"
@@ -208,15 +178,7 @@ class Structure(models.Model):
         field_name = f"name_{language}"
         return getattr(self, field_name, self.name_ru)
 
-    def get_short_description(self, language="ru"):
-        field_name = f"short_description_{language}"
-        return getattr(self, field_name, self.short_description_ru)
-
     def get_description(self, language="ru"):
         field_name = f"description_{language}"
         return getattr(self, field_name, self.description_ru)
 
-    def get_achievements(self, language="ru"):
-        field_name = f"achievements_{language}"
-        achievements = getattr(self, field_name, None)
-        return achievements if achievements is not None else []

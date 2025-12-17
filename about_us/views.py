@@ -120,11 +120,8 @@ class StructureViewSet(LocalizationMixin, ReadOnlyModelViewSet):
         "name_en",
         "name_ru",
         "name_kg",
-        "short_description_en",
-        "short_description_ru",
-        "short_description_kg",
         "description_en",
         "description_ru",
         "description_kg",
     ]
-    ordering_fields = ["order", "founded_year", "name_ru"]
+    ordering_fields = ["order", "name_ru"]

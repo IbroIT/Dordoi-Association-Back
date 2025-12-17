@@ -62,7 +62,10 @@ INSTALLED_APPS = [
     "Banners",
     "contacts",
     'Gallery',
+    'ckeditor',         # Обязательно
+    'ckeditor_uploader', # Ключевой для загрузки изображений
 ]
+
 
 
 
@@ -151,7 +154,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -164,6 +166,24 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'extraPlugins': 'image2',  # Ключевой плагин для float left/right
+        'removePlugins': 'image',  # Отключаем старый плагин
+        'width': '100%',
+        'height': 500,
+        'enterMode': 2,  # Используем <br> для новой строки
+        'shiftEnterMode': 1,     # Shift+Enter создаёт <p> (если нужен параграф)
+        'allowedContent': True,  # разрешаем любые стили
+        'language': 'ru',          # Русский язык для UI CKEditor
+    },
+}
+
 
 
 # Password validation

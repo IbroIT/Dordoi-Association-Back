@@ -7,16 +7,16 @@ class BannerSerializer(serializers.ModelSerializer):
     idea = serializers.SerializerMethodField()
 
 
+
     class Meta:
         model = Banner
-        fields = ['id', 'image', 'title', 'idea',  'link_url']
+        fields = ['id', 'image', 'title', 'idea', 'link_url']
 
     def get_title(self, obj):
         return obj.get_title(self.context.get("language", "ru"))
     
     def get_idea(self, obj):
         return obj.get_idea(self.context.get("language", "ru"))
-    
 
-    
+
     

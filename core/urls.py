@@ -27,6 +27,8 @@ urlpatterns = [
     path("api/", include("Banners.urls")),
     path('api/gallery/', include('Gallery.urls')),
     path('api/', include('contacts.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),  # Вот это обязательно!
+
 
     path(
         "swagger/",

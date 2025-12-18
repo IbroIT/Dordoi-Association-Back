@@ -153,6 +153,19 @@ class Structure(models.Model):
 
     logo = models.ImageField(upload_to="subsidiaries/logos/", verbose_name="Логотип")
 
+    aspect_ratio = models.CharField(
+        choices=[
+            ('square', 'Квадрат (1:1)'),
+            ('portrait', 'Портрет (3:4)'),
+            ('landscape', 'Пейзаж (4:3)'),
+            ('wide', 'Широкий (16:9)'),
+            ('tall', 'Высокий (9:16)')
+        ],
+        default='square',
+        max_length=20,
+        verbose_name='Пропорции логотипа'
+    )
+
     name_en = models.CharField(max_length=255, verbose_name="Название (EN)")
     name_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
     name_kg = models.CharField(max_length=255, verbose_name="Название (KG)")

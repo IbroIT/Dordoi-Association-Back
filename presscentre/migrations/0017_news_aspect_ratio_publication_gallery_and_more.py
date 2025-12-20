@@ -13,11 +13,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='news',
-            name='aspect_ratio',
-            field=models.CharField(choices=[('16x9', '16:9 (Широкоформатное)'), ('4x3', '4:3 (Стандартное)'), ('1x1', '1:1 (Квадратное)'), ('3x4', '3:4 (Портретное)'), ('9x16', '9:16 (Вертикальное)')], default='16x9', help_text='Выберите желаемое соотношение сторон для изображения', max_length=20, verbose_name='Соотношение сторон'),
-        ),
-        migrations.AddField(
             model_name='publication',
             name='gallery',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='publications', to='Gallery.gallery', verbose_name='Галерея'),

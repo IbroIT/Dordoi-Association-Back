@@ -58,15 +58,6 @@ class News(models.Model):
         verbose_name="Категория",
     )
 
-    gallery = models.ForeignKey(
-        Gallery,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="news",
-        verbose_name="Галерея",
-    )
-
     is_recommended = models.BooleanField(
         default=False,
         verbose_name="Рекомендуемая",
@@ -273,6 +264,15 @@ class Publication(models.Model):
 
     pdf_file = models.FileField(
         upload_to="publications/pdfs/", verbose_name="PDF файл", blank=True, null=True
+    )
+
+    gallery = models.ForeignKey(
+        Gallery,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="publications",
+        verbose_name="Галерея",
     )
 
     published_at = models.DateField(

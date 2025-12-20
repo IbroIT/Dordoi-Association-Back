@@ -40,7 +40,6 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
-    gallery = GallerySerializer(read_only=True)
 
     class Meta:
         model = News
@@ -56,7 +55,6 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
             "published_at",
             "category",
             "is_banner",
-            "gallery",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -90,6 +88,7 @@ class PublicationCategorySerializer(
 
 class PublicationSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     category = PublicationCategorySerializer(read_only=True)
+    gallery = GallerySerializer(read_only=True)
     title = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
@@ -103,6 +102,7 @@ class PublicationSerializer(LocalizationSerializerMixin, serializers.ModelSerial
             "description",
             "author",
             "pdf_file",
+            "gallery",
             "published_at",
             "created_at",
             "updated_at",

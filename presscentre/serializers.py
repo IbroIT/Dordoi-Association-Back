@@ -43,7 +43,7 @@ class NewsPhotoSerializer(serializers.ModelSerializer):
 class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
 
     category = CategorySerializer(read_only=True)
-    photos = NewsPhotoSerializer(many=True, read_only=True, source="photos")
+    photos = NewsPhotoSerializer(many=True, read_only=True)
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()

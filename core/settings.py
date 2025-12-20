@@ -73,7 +73,6 @@ INSTALLED_APPS = [
     'ckeditor',         # Обязательно
     'ckeditor_uploader', # Ключевой для загрузки изображений
     'easy_thumbnails',
-    'image_cropping',
 ]
 
 
@@ -342,7 +341,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Настройки для easy-thumbnails
 THUMBNAIL_PROCESSORS = (
-    'image_cropping.thumbnail_processors.crop_corners',
     'easy_thumbnails.processors.colorspace',
     'easy_thumbnails.processors.autocrop',
     'easy_thumbnails.processors.scale_and_crop',
@@ -357,10 +355,6 @@ THUMBNAIL_ALIASES = {
         'news_small': {'size': (400, 225), 'crop': True},
     },
 }
-
-# Настройки для django-image-cropping
-IMAGE_CROPPING_SIZE_WARNING = True
-IMAGE_CROPPING_JQUERY_URL = None
 
 
 REST_FRAMEWORK = {

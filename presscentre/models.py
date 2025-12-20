@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from image_cropping import ImageRatioField
 from Gallery.models import Gallery
 
 
@@ -126,14 +125,6 @@ class News(models.Model):
         default='16x9',
         verbose_name="Соотношение сторон",
         help_text="Выберите желаемое соотношение сторон для изображения",
-    )
-
-    # Поле для хранения координат обрезки изображения
-    cropping = ImageRatioField(
-        'image',
-        '1200x675',
-        verbose_name="Обрезка изображения",
-        help_text="Выберите область для обрезки. Перетащите или измените размер рамки для выбора нужной области.",
     )
 
     class Meta:

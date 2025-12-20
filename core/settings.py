@@ -285,6 +285,10 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Security Settings for Development
 SECURE_SSL_REDIRECT = False
 SECURE_HSTS_SECONDS = 0

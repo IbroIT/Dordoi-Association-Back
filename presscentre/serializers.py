@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, News, Publication, PublicationCategory
+from .models import Category, News, Publication, PublicationCategory, NewsPhoto
 from Gallery.serializers import GallerySerializer
 
 
@@ -34,9 +34,16 @@ class CategorySerializer(LocalizationSerializerMixin, serializers.ModelSerialize
         return obj.get_title(language=language)
 
 
+class NewsPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsPhoto
+        fields = ["id", "image", "order"]
+
+
 class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
 
     category = CategorySerializer(read_only=True)
+    photos = NewsPhotoSerializer(many=True, read_only=True, source="photos")
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
@@ -49,6 +56,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
             "description",
             "short_description",
             "image",
+            "photos",
             "is_recommended",
             "created_at",
             "updated_at",

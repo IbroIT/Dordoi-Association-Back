@@ -1,6 +1,6 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from .models import Category, News, Publication, PublicationCategory
+from .models import Category, News, Publication, PublicationCategory, NewsPhoto
 
 
 @admin.register(Category)
@@ -14,12 +14,20 @@ class PublicationCategoryAdmin(ModelAdmin):
     search_fields = ["title_ru", "title_en", "title_kg"]
 
 
+class NewsPhotoInline(admin.TabularInline):
+    model = NewsPhoto
+    extra = 1
+    fields = ["image", "order"]
+    ordering = ["order"]
+
+
 @admin.register(News)
 class NewsAdmin(ModelAdmin):
     list_display = ["id", "get_title", "category", "is_recommended", "published_at", "created_at"]
     list_filter = ["category", "is_recommended", "published_at", "is_banner"]
     search_fields = ["title_ru", "title_en", "title_kg", "short_description_ru", "short_description_en", "short_description_kg"]
     readonly_fields = ["created_at", "updated_at"]
+    inlines = [NewsPhotoInline]
 
     fieldsets = (
         ("Основная информация", {

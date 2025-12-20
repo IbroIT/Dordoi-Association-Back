@@ -103,21 +103,6 @@ class News(models.Model):
         help_text="Рекомендуемый размер: (16:9)",
     )
 
-    # Поле для выбора соотношения сторон
-    aspect_ratio = models.CharField(
-        max_length=20,
-        choices=[
-            ('16x9', '16:9 (Широкоформатное)'),
-            ('4x3', '4:3 (Стандартное)'),
-            ('1x1', '1:1 (Квадратное)'),
-            ('3x4', '3:4 (Портретное)'),
-            ('9x16', '9:16 (Вертикальное)'),
-        ],
-        default='16x9',
-        verbose_name="Соотношение сторон",
-        help_text="Выберите желаемое соотношение сторон для изображения",
-    )
-
     class Meta:
         verbose_name = "Новость"
         verbose_name_plural = "Новости"
@@ -190,6 +175,32 @@ class News(models.Model):
         super().clean()
         if not any([self.title_ru, self.title_en, self.title_kg]):
             raise ValidationError("Необходимо заполнить хотя бы один заголовок")
+
+
+class NewsPhoto(models.Model):
+    news = models.ForeignKey(
+        News,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name="Новость",
+    )
+    image = models.ImageField(
+        upload_to="news/photos/",
+        verbose_name="Фото",
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок",
+        help_text="Порядок отображения фото",
+    )
+
+    class Meta:
+        verbose_name = "Фото новости"
+        verbose_name_plural = "Фото новости"
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"Фото {self.id} для новости {self.news.title_ru}"
 
 
 class PublicationCategory(models.Model):

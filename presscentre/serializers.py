@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Category, News, Publication, PublicationCategory
+from Gallery.serializers import GallerySerializer
 
 
 class LocalizationSerializerMixin:
@@ -39,6 +40,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
+    gallery = GallerySerializer(read_only=True)
 
     class Meta:
         model = News
@@ -54,6 +56,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
             "published_at",
             "category",
             "is_banner",
+            "gallery",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 

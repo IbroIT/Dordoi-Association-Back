@@ -9,12 +9,14 @@ Django==5.2.8
 django-ckeditor==6.7.3
 django-cors-headers==4.9.0
 django-filter==24.3
+django-image-cropping==1.7
 django-js-asset==3.1.2
 django-storages==1.14.4
 django-unfold==0.42.0
 djangorestframework==3.16.1
 drf-spectacular==0.27.2
 drf-yasg==1.21.11
+easy-thumbnails==2.10
 gunicorn==23.0.0
 idna==3.11
 inflection==0.5.1

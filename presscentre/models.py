@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from image_cropping import ImageRatioField
+from Gallery.models import Gallery
 
 
 class Category(models.Model):
@@ -57,6 +59,15 @@ class News(models.Model):
         verbose_name="Категория",
     )
 
+    gallery = models.ForeignKey(
+        Gallery,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="news",
+        verbose_name="Галерея",
+    )
+
     is_recommended = models.BooleanField(
         default=False,
         verbose_name="Рекомендуемая",
@@ -99,7 +110,30 @@ class News(models.Model):
         null=True,
         blank=True,
         verbose_name="Изображение",
-        help_text="Рекомендуемый размер: 1200x630px",
+        help_text="Рекомендуемый размер: (16:9)",
+    )
+
+    # Поле для выбора соотношения сторон
+    aspect_ratio = models.CharField(
+        max_length=20,
+        choices=[
+            ('16x9', '16:9 (Широкоформатное)'),
+            ('4x3', '4:3 (Стандартное)'),
+            ('1x1', '1:1 (Квадратное)'),
+            ('3x4', '3:4 (Портретное)'),
+            ('9x16', '9:16 (Вертикальное)'),
+        ],
+        default='16x9',
+        verbose_name="Соотношение сторон",
+        help_text="Выберите желаемое соотношение сторон для изображения",
+    )
+
+    # Поле для хранения координат обрезки изображения
+    cropping = ImageRatioField(
+        'image',
+        '1200x675',
+        verbose_name="Обрезка изображения",
+        help_text="Выберите область для обрезки. Перетащите или измените размер рамки для выбора нужной области.",
     )
 
     class Meta:

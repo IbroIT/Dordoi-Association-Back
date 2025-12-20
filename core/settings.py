@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import easy_thumbnails
 
 # Load environment variables
 load_dotenv()
@@ -71,6 +72,8 @@ INSTALLED_APPS = [
     'Gallery',
     'ckeditor',         # Обязательно
     'ckeditor_uploader', # Ключевой для загрузки изображений
+    'easy_thumbnails',
+    'image_cropping',
 ]
 
 
@@ -331,6 +334,29 @@ LOGGING = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Настройки для easy-thumbnails
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'easy_thumbnails.processors.scale_and_crop',
+    'easy_thumbnails.processors.filters',
+    'easy_thumbnails.processors.background',
+)
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'news_large': {'size': (1200, 675), 'crop': True},
+        'news_medium': {'size': (800, 450), 'crop': True},
+        'news_small': {'size': (400, 225), 'crop': True},
+    },
+}
+
+# Настройки для django-image-cropping
+IMAGE_CROPPING_SIZE_WARNING = True
+IMAGE_CROPPING_JQUERY_URL = None
 
 
 REST_FRAMEWORK = {

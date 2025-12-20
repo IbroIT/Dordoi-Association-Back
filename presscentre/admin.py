@@ -36,22 +36,12 @@ class NewsAdmin(ModelAdmin):
             "classes": ("collapse",)
         }),
         ("Изображение", {
-            "fields": ("image", "cropping")
+            "fields": ("image",)
         }),
         ("Даты", {
             "fields": ("published_at", "created_at", "updated_at")
         }),
     )
-
-    class Media:
-        js = (
-            'https://code.jquery.com/jquery-3.6.0.min.js',
-            'image_cropping/cropping.js',
-            'presscentre/cropping_admin.js',
-        )
-        css = {
-            'all': ('image_cropping/cropping.css',)
-        }
 
     def get_title(self, obj):
         return obj.get_title()

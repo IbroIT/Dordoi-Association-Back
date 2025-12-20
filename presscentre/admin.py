@@ -1,6 +1,5 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from image_cropping import ImageCroppingMixin
 from .models import Category, News, Publication, PublicationCategory
 
 
@@ -16,7 +15,7 @@ class PublicationCategoryAdmin(ModelAdmin):
 
 
 @admin.register(News)
-class NewsAdmin(ImageCroppingMixin, ModelAdmin):
+class NewsAdmin(ModelAdmin):
     list_display = ["id", "get_title", "category", "is_recommended", "published_at", "created_at"]
     list_filter = ["category", "is_recommended", "published_at", "is_banner"]
     search_fields = ["title_ru", "title_en", "title_kg", "short_description_ru", "short_description_en", "short_description_kg"]

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('presscentre', '0011_news_cropping'),
+        ('presscentre', '0010_remove_news_aspect_ratio'),
     ]
 
     operations = [

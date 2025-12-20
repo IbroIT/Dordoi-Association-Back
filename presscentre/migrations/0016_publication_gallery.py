@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('Gallery', '0004_alter_gallery_options_remove_photos_title_en_and_more'),
-        ('presscentre', '0011_news_cropping'),
+        ('presscentre', '0010_remove_news_aspect_ratio'),
     ]
 
     operations = [

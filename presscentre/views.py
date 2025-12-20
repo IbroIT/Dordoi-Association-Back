@@ -43,7 +43,7 @@ class BannerNewsViewSet(LocalizationMixin, generics.ListAPIView):
 
 class NewsViewSet(LocalizationMixin, ReadOnlyModelViewSet):
 
-    queryset = News.objects.select_related("category").all().order_by("-created_at")
+    queryset = News.objects.select_related("category").prefetch_related("photos").all().order_by("-created_at")
     serializer_class = NewsSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["category", "is_recommended"]

@@ -10,9 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='news',
-            name='cropping',
-            field=models.CharField(blank=True, help_text='Координаты обрезки изображения (JSON формат)', max_length=255, null=True, verbose_name='Обрезка изображения'),
+        migrations.RunSQL(
+            sql="ALTER TABLE presscentre_news ADD COLUMN IF NOT EXISTS cropping VARCHAR(255) NULL;",
+            reverse_sql="ALTER TABLE presscentre_news DROP COLUMN IF EXISTS cropping;",
         ),
     ]

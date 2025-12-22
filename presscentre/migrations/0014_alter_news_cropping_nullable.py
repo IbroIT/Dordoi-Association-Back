@@ -10,9 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='news',
-            name='cropping',
-            field=models.CharField(blank=True, help_text='Координаты обрезки изображения (JSON формат)', max_length=255, null=True, verbose_name='Обрезка изображения'),
+        migrations.RunSQL(
+            sql="ALTER TABLE presscentre_news ALTER COLUMN cropping DROP NOT NULL;",
+            reverse_sql="ALTER TABLE presscentre_news ALTER COLUMN cropping SET NOT NULL;",
         ),
     ]

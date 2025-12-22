@@ -10,8 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='news',
-            name='aspect_ratio',
+        migrations.RunSQL(
+            sql="ALTER TABLE presscentre_news DROP COLUMN IF EXISTS aspect_ratio;",
+            reverse_sql="ALTER TABLE presscentre_news ADD COLUMN IF NOT EXISTS aspect_ratio VARCHAR(20) DEFAULT 'landscape' NOT NULL;",
         ),
     ]

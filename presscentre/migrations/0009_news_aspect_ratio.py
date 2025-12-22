@@ -10,9 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='news',
-            name='aspect_ratio',
-            field=models.CharField(choices=[('square', 'Квадрат (1:1)'), ('portrait', 'Портрет (3:4)'), ('landscape', 'Пейзаж (4:3)'), ('wide', 'Широкий (16:9)'), ('tall', 'Высокий (9:16)')], default='landscape', max_length=20, verbose_name='Пропорции изображения'),
+        migrations.RunSQL(
+            sql="ALTER TABLE presscentre_news ADD COLUMN IF NOT EXISTS aspect_ratio VARCHAR(20) DEFAULT 'landscape' NOT NULL;",
+            reverse_sql="ALTER TABLE presscentre_news DROP COLUMN IF EXISTS aspect_ratio;",
         ),
     ]

@@ -103,6 +103,14 @@ class News(models.Model):
         help_text="Рекомендуемый размер: (16:9)",
     )
 
+    cropping = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Обрезка изображения",
+        help_text="Координаты обрезки изображения (JSON формат)",
+    )
+
     class Meta:
         verbose_name = "Новость"
         verbose_name_plural = "Новости"

@@ -25,11 +25,9 @@ urlpatterns = [
     path("health/", health_check, name="health_check"),
     path("media/<path:path>", serve_media, name="serve_media"),
     path("api/", include("Banners.urls")),
-    path('api/gallery/', include('Gallery.urls')),
-    path('api/', include('contacts.urls')),
-    path('ckeditor/', include('ckeditor_uploader.urls')),  # Вот это обязательно!
-
-
+    path("api/gallery/", include("Gallery.urls")),
+    path("api/", include("contacts.urls")),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),  # CKEditor 5 upload endpoint
     path(
         "swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),

@@ -26,18 +26,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-(4f8!eiec#)#e#cs)r1@p^_&1qzvsxdtw*^(gz-&2*nu)b4r(6")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-(4f8!eiec#)#e#cs)r1@p^_&1qzvsxdtw*^(gz-&2*nu)b4r(6"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = ['*']
+# DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'https://localhost:8000',
-    'https://127.0.0.1:8000',
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://localhost:8000",
+    "https://127.0.0.1:8000",
 ]
 
 # Application definition
@@ -69,13 +71,10 @@ INSTALLED_APPS = [
     "core",
     "Banners",
     "contacts",
-    'Gallery',
-    'ckeditor',         # Обязательно
-    'ckeditor_uploader', # Ключевой для загрузки изображений
-    'easy_thumbnails',
+    "Gallery",
+    "django_ckeditor_5",  # CKEditor 5 для богатого текста
+    "easy_thumbnails",
 ]
-
-
 
 
 MIDDLEWARE = [
@@ -108,40 +107,40 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173"
+    "http://127.0.0.1:5173",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Disable wildcard for CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'x-cors-headers',
-    'content-disposition',
-    'content-length',
-    'cache-control',
-    'pragma',
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "x-cors-headers",
+    "content-disposition",
+    "content-length",
+    "cache-control",
+    "pragma",
 ]
 
 # Additional CORS settings for file uploads
 CORS_EXPOSE_HEADERS = [
-    'content-type',
-    'content-length',
+    "content-type",
+    "content-length",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -177,22 +176,237 @@ DATABASES = {
 }
 
 
-CKEDITOR_UPLOAD_PATH = "uploads/"
+# CKEditor 5 Configuration
+customColorPalette = [
+    {"color": "hsl(4, 90%, 58%)", "label": "Red"},
+    {"color": "hsl(340, 82%, 52%)", "label": "Pink"},
+    {"color": "hsl(291, 64%, 42%)", "label": "Purple"},
+    {"color": "hsl(262, 52%, 47%)", "label": "Deep Purple"},
+    {"color": "hsl(231, 48%, 48%)", "label": "Indigo"},
+    {"color": "hsl(207, 90%, 54%)", "label": "Blue"},
+]
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'extraPlugins': 'image2',  # Ключевой плагин для float left/right
-        'removePlugins': 'image',  # Отключаем старый плагин
-        'width': '100%',
-        'height': 500,
-        'enterMode': 2,  # Используем <br> для новой строки
-        'shiftEnterMode': 1,     # Shift+Enter создаёт <p> (если нужен параграф)
-        'allowedContent': True,  # разрешаем любые стили
-        'language': 'ru',          # Русский язык для UI CKEditor
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "blockQuote",
+            "imageUpload",
+            "|",
+            "fontSize",
+            "fontFamily",
+            "fontColor",
+            "fontBackgroundColor",
+            "|",
+            "alignment",
+            "indent",
+            "outdent",
+            "|",
+            "insertTable",
+            "mediaEmbed",
+            "|",
+            "undo",
+            "redo",
+        ],
+        "language": "ru",
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "|",
+                "imageStyle:alignLeft",
+                "imageStyle:alignCenter",
+                "imageStyle:alignRight",
+            ],
+            "styles": ["alignLeft", "alignCenter", "alignRight"],
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "tableProperties",
+                "tableCellProperties",
+            ],
+        },
+        "heading": {
+            "options": [
+                {
+                    "model": "paragraph",
+                    "title": "Paragraph",
+                    "class": "ck-heading_paragraph",
+                },
+                {
+                    "model": "heading1",
+                    "view": "h1",
+                    "title": "Heading 1",
+                    "class": "ck-heading_heading1",
+                },
+                {
+                    "model": "heading2",
+                    "view": "h2",
+                    "title": "Heading 2",
+                    "class": "ck-heading_heading2",
+                },
+                {
+                    "model": "heading3",
+                    "view": "h3",
+                    "title": "Heading 3",
+                    "class": "ck-heading_heading3",
+                },
+            ]
+        },
+        "fontFamily": {
+            "options": [
+                "default",
+                "Arial, Helvetica, sans-serif",
+                "Courier New, Courier, monospace",
+                "Georgia, serif",
+                "Lucida Sans Unicode, Lucida Grande, sans-serif",
+                "Tahoma, Geneva, sans-serif",
+                "Times New Roman, Times, serif",
+                "Trebuchet MS, Helvetica, sans-serif",
+                "Verdana, Geneva, sans-serif",
+            ],
+            "supportAllValues": True,
+        },
+        "fontSize": {
+            "options": [10, 12, 14, "default", 18, 20, 22],
+            "supportAllValues": True,
+        },
+        "fontColor": {
+            "columns": 6,
+            "colors": customColorPalette,
+        },
+        "fontBackgroundColor": {
+            "columns": 6,
+            "colors": customColorPalette,
+        },
+    },
+    "extends": {
+        "blockToolbar": [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "blockQuote",
+        ],
+        "toolbar": [
+            "heading",
+            "|",
+            "outdent",
+            "indent",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "underline",
+            "strikethrough",
+            "code",
+            "subscript",
+            "superscript",
+            "highlight",
+            "|",
+            "codeBlock",
+            "sourceEditing",
+            "insertImage",
+            "bulletedList",
+            "numberedList",
+            "todoList",
+            "|",
+            "blockQuote",
+            "imageUpload",
+            "|",
+            "fontSize",
+            "fontFamily",
+            "fontColor",
+            "fontBackgroundColor",
+            "mediaEmbed",
+            "removeFormat",
+            "insertTable",
+        ],
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "|",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "imageStyle:side",
+                "|",
+            ],
+            "styles": [
+                "full",
+                "side",
+                "alignLeft",
+                "alignRight",
+                "alignCenter",
+            ],
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "tableProperties",
+                "tableCellProperties",
+            ],
+            "tableProperties": {
+                "borderColors": customColorPalette,
+                "backgroundColors": customColorPalette,
+            },
+            "tableCellProperties": {
+                "borderColors": customColorPalette,
+                "backgroundColors": customColorPalette,
+            },
+        },
+        "heading": {
+            "options": [
+                {
+                    "model": "paragraph",
+                    "title": "Paragraph",
+                    "class": "ck-heading_paragraph",
+                },
+                {
+                    "model": "heading1",
+                    "view": "h1",
+                    "title": "Heading 1",
+                    "class": "ck-heading_heading1",
+                },
+                {
+                    "model": "heading2",
+                    "view": "h2",
+                    "title": "Heading 2",
+                    "class": "ck-heading_heading2",
+                },
+                {
+                    "model": "heading3",
+                    "view": "h3",
+                    "title": "Heading 3",
+                    "class": "ck-heading_heading3",
+                },
+            ]
+        },
+    },
+    "list": {
+        "properties": {
+            "styles": True,
+            "startIndex": True,
+            "reversed": True,
+        }
     },
 }
 
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
 
 
 # Password validation
@@ -236,13 +450,17 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # AWS S3 Settings for Bucketeer
-AWS_ACCESS_KEY_ID = os.getenv('BUCKETEER_AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('BUCKETEER_AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKETEER_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('BUCKETEER_AWS_REGION', 'eu-west-1')
+AWS_ACCESS_KEY_ID = os.getenv("BUCKETEER_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("BUCKETEER_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("BUCKETEER_AWS_REGION", "eu-west-1")
 
 # Use region-specific endpoint for proper access
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3-{AWS_S3_REGION_NAME}.amazonaws.com' if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME else None
+AWS_S3_CUSTOM_DOMAIN = (
+    f"{AWS_STORAGE_BUCKET_NAME}.s3-{AWS_S3_REGION_NAME}.amazonaws.com"
+    if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME
+    else None
+)
 
 # S3 Configuration
 AWS_S3_USE_SSL = True
@@ -250,14 +468,14 @@ AWS_S3_VERIFY = True
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None  # Don't set ACLs (Bucketeer requirement)
 AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
+    "CacheControl": "max-age=86400",
 }
 
 # Bucket policy is configured via management command: python manage.py fix_s3_policy
 # This ensures public read access to all files
 
 # Static and Media files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Configure storage backends
 if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
@@ -270,7 +488,7 @@ if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 else:
     # Use local filesystem
     STORAGES = {
@@ -281,12 +499,17 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# CKEditor 5 File Storage (must be after STORAGES definition)
+CKEDITOR_5_FILE_STORAGE = STORAGES.get("default", {}).get(
+    "BACKEND", "django.core.files.storage.FileSystemStorage"
+)
 
 # Security Settings for Development
 SECURE_SSL_REDIRECT = False
@@ -297,37 +520,37 @@ SECURE_CONTENT_TYPE_NOSNIFF = False
 
 # Logging configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
-    'loggers': {
-        'core.middleware': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-            'propagate': False,
+    "loggers": {
+        "core.middleware": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
         },
-        'boto3': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-            'propagate': False,
+        "boto3": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
         },
-        'botocore': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-            'propagate': False,
+        "botocore": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
         },
-        'storages': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-            'propagate': False,
+        "storages": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
         },
     },
 }
@@ -336,36 +559,36 @@ LOGGING = {
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Настройки для easy-thumbnails
 THUMBNAIL_PROCESSORS = (
-    'easy_thumbnails.processors.colorspace',
-    'easy_thumbnails.processors.autocrop',
-    'easy_thumbnails.processors.scale_and_crop',
-    'easy_thumbnails.processors.filters',
-    'easy_thumbnails.processors.background',
+    "easy_thumbnails.processors.colorspace",
+    "easy_thumbnails.processors.autocrop",
+    "easy_thumbnails.processors.scale_and_crop",
+    "easy_thumbnails.processors.filters",
+    "easy_thumbnails.processors.background",
 )
 
 THUMBNAIL_ALIASES = {
-    '': {
-        'news_large': {'size': (1200, 675), 'crop': True},
-        'news_medium': {'size': (800, 450), 'crop': True},
-        'news_small': {'size': (400, 225), 'crop': True},
+    "": {
+        "news_large": {"size": (1200, 675), "crop": True},
+        "news_medium": {"size": (800, 450), "crop": True},
+        "news_small": {"size": (400, 225), "crop": True},
     },
 }
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # ... your other DRF settings
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Dordoi Association API',
-    'DESCRIPTION': 'API for Dordoi Association',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Dordoi Association API",
+    "DESCRIPTION": "API for Dordoi Association",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }

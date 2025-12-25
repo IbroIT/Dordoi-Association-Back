@@ -250,60 +250,19 @@ class PublicationCategory(models.Model):
 
 
 class Publication(models.Model):
-    category = models.ForeignKey(
-        PublicationCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="publications",
-        verbose_name="Категория",
-    )
-
     title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
     title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
     title_kg = models.CharField(max_length=255, verbose_name="Заголовок (KG)")
 
-    short_description_en = models.TextField(
-        blank=True, verbose_name="Краткое описание (EN)"
-    )
-    short_description_ru = models.TextField(
-        blank=True, verbose_name="Краткое описание (RU)"
-    )
-    short_description_kg = models.TextField(
-        blank=True, verbose_name="Краткое описание (KG)"
-    )
+    link = models.URLField(max_length=500, verbose_name="Ссылка", blank=True, null=True)
 
-    description_en = models.TextField(blank=True, verbose_name="Полное описание (EN)")
-    description_ru = models.TextField(blank=True, verbose_name="Полное описание (RU)")
-    description_kg = models.TextField(blank=True, verbose_name="Полное описание (KG)")
-
-    author = models.CharField(
-        max_length=255, verbose_name="Автор", blank=True, null=True
-    )
-
-    pdf_file = models.FileField(
-        upload_to="publications/pdfs/", verbose_name="PDF файл", blank=True, null=True
-    )
-
-    gallery = models.ForeignKey(
-        Gallery,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="publications",
-        verbose_name="Галерея",
-    )
-
-    published_at = models.DateField(
-        null=True, blank=True, verbose_name="Дата публикации", db_index=True
-    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         verbose_name = "Публикация"
         verbose_name_plural = "Публикации"
-        ordering = ["-published_at", "-created_at"]
+        ordering = ["-created_at"]
 
     def __str__(self):
         return self.get_title()
@@ -318,21 +277,3 @@ class Publication(models.Model):
         if language != "en" and self.title_en and self.title_en.strip():
             return self.title_en.strip()
         return f"Publication #{self.pk}" if self.pk else "New Publication"
-
-    def get_short_description(self, language="ru"):
-        field_name = f"short_description_{language}"
-        value = getattr(self, field_name, None)
-        if value and value.strip():
-            return value.strip()
-        return self.get_description(language)
-
-    def get_description(self, language="ru"):
-        field_name = f"description_{language}"
-        value = getattr(self, field_name, None)
-        if value and value.strip():
-            return value.strip()
-        if language != "ru" and self.description_ru and self.description_ru.strip():
-            return self.description_ru.strip()
-        if language != "en" and self.description_en and self.description_en.strip():
-            return self.description_en.strip()
-        return ""

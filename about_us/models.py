@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from ckeditor_uploader.fields import RichTextUploadingField
+from django_ckeditor_5.fields import CKEditor5Field
 
 # Create your models here.
 
@@ -155,31 +155,36 @@ class Structure(models.Model):
 
     aspect_ratio = models.CharField(
         choices=[
-            ('square', 'Квадрат (1:1)'),
-            ('portrait', 'Портрет (3:4)'),
-            ('landscape', 'Пейзаж (4:3)'),
-            ('wide', 'Широкий (16:9)'),
-            ('tall', 'Высокий (9:16)')
+            ("square", "Квадрат (1:1)"),
+            ("portrait", "Портрет (3:4)"),
+            ("landscape", "Пейзаж (4:3)"),
+            ("wide", "Широкий (16:9)"),
+            ("tall", "Высокий (9:16)"),
         ],
-        default='square',
+        default="square",
         max_length=20,
-        verbose_name='Пропорции логотипа'
+        verbose_name="Пропорции логотипа",
     )
 
     name_en = models.CharField(max_length=255, verbose_name="Название (EN)")
     name_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
     name_kg = models.CharField(max_length=255, verbose_name="Название (KG)")
 
-    description_ru = RichTextUploadingField(null=True, blank=True)
-    description_en = RichTextUploadingField(null=True, blank=True)
-    description_kg = RichTextUploadingField(null=True, blank=True)
+    description_ru = CKEditor5Field(
+        "Description (RU)", config_name="extends", null=True, blank=True
+    )
+    description_en = CKEditor5Field(
+        "Description (EN)", config_name="extends", null=True, blank=True
+    )
+    description_kg = CKEditor5Field(
+        "Description (KG)", config_name="extends", null=True, blank=True
+    )
 
     address = models.CharField(max_length=500, verbose_name="Адрес", blank=True)
     email = models.EmailField(verbose_name="Email", blank=True)
     phone = models.CharField(max_length=50, verbose_name="Телефон", blank=True)
 
     order = models.IntegerField(default=0, verbose_name="Порядок отображения")
-
 
     class Meta:
         verbose_name = "Структурное подразделение"
@@ -196,4 +201,3 @@ class Structure(models.Model):
     def get_description(self, language="ru"):
         field_name = f"description_{language}"
         return getattr(self, field_name, self.description_ru)
-

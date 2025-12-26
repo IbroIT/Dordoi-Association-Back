@@ -1,6 +1,6 @@
 from unfold.admin import ModelAdmin
 from django.contrib import admin
-from .models import Category, News, Publication, PublicationCategory, NewsPhoto
+from .models import Category, News, Publication, NewsPhoto
 
 
 @admin.register(Publication)

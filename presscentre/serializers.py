@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, News, Publication, PublicationCategory, NewsPhoto
+from .models import Category, News, Publication, NewsPhoto
 from Gallery.serializers import GallerySerializer
 
 

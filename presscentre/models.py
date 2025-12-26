@@ -211,44 +211,6 @@ class NewsPhoto(models.Model):
         return f"Фото {self.id} для новости {self.news.title_ru}"
 
 
-class PublicationCategory(models.Model):
-    title_en = models.CharField(max_length=255, verbose_name="Название (EN)")
-    title_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
-    title_kg = models.CharField(max_length=255, verbose_name="Название (KG)")
-
-    class Meta:
-        verbose_name = "Категория публикации"
-        verbose_name_plural = "Категории публикаций"
-        ordering = ["title_ru"]
-
-    def __str__(self):
-        return self.get_title()
-
-    def get_title(self, language="ru"):
-        field_name = f"title_{language}"
-        value = getattr(self, field_name, None)
-
-        if value and value.strip():
-            return value.strip()
-
-        if language != "ru" and self.title_ru and self.title_ru.strip():
-            return self.title_ru.strip()
-
-        if language != "en" and self.title_en and self.title_en.strip():
-            return self.title_en.strip()
-
-        return f"PublicationCategory #{self.pk}"
-
-    @property
-    def title(self):
-        return self.get_title(language="ru") or ""
-
-    def clean(self):
-        super().clean()
-        if not any([self.title_ru, self.title_en, self.title_kg]):
-            raise ValidationError("Необходимо заполнить хотя бы одно название")
-
-
 class Publication(models.Model):
     title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
     title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")

@@ -7,6 +7,8 @@ from rest_framework import generics
 from .models import Category, News, Publication
 from .serializers import (
     PublicationSerializer,
+    CategorySerializer,
+    NewsSerializer,
 )
 
 
@@ -35,3 +37,36 @@ class PublicationViewSet(LocalizationMixin, ReadOnlyModelViewSet):
         "link",
     ]
     ordering_fields = ["created_at", "title_ru"]
+
+
+class CategoryViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+
+    queryset = Category.objects.all().order_by("title_ru")
+    serializer_class = CategorySerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = [
+        "title_en",
+        "title_ru",
+        "title_kg",
+    ]
+    ordering_fields = ["title_ru"]
+
+
+class NewsViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+
+    queryset = News.objects.all().order_by("-created_at")
+    serializer_class = NewsSerializer
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
+    search_fields = [
+        "title_en",
+        "title_ru",
+        "title_kg",
+        "short_description_en",
+        "short_description_ru",
+        "short_description_kg",
+        "description_en",
+        "description_ru",
+        "description_kg",
+    ]
+    ordering_fields = ["created_at", "published_at", "title_ru"]
+    filterset_fields = ["category", "is_banner", "is_recommended"]

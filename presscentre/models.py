@@ -145,3 +145,33 @@ class News(models.Model):
         super().clean()
         if not any([self.title_ru, self.title_en, self.title_kg]):
             raise ValidationError("Необходимо заполнить хотя бы один заголовок")
+
+
+class NewsPhoto(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='photos', verbose_name="Новость")
+    image = models.ImageField(upload_to="news/photos/", verbose_name="Фото")
+    alt_text_en = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (EN)")
+    alt_text_ru = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (RU)")
+    alt_text_kg = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (KG)")
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
+
+    class Meta:
+        verbose_name = "Фото новости"
+        verbose_name_plural = "Фото новостей"
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"Фото для {self.news.get_title()}"
+
+    def get_alt_text(self, language="ru"):
+        field_name = f"alt_text_{language}"
+        value = getattr(self, field_name, None)
+        if value and value.strip():
+            return value.strip()
+        # Fallback to other languages
+        for lang in ['ru', 'en', 'kg']:
+            if lang != language:
+                val = getattr(self, f"alt_text_{lang}", None)
+                if val and val.strip():
+                    return val.strip()
+        return ""

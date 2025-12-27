@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, News
+from .models import Category, News, NewsPhoto
 
 
 class LocalizationSerializerMixin:
@@ -33,12 +33,25 @@ class CategorySerializer(LocalizationSerializerMixin, serializers.ModelSerialize
         return obj.get_title(language=language)
 
 
+class NewsPhotoSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
+    alt_text = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NewsPhoto
+        fields = ['id', 'image', 'alt_text', 'order']
+
+    def get_alt_text(self, obj):
+        language = self._get_language()
+        return obj.get_alt_text(language=language)
+
+
 class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
 
     category = CategorySerializer(read_only=True)
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
+    photos = serializers.SerializerMethodField()
 
     class Meta:
         model = News
@@ -53,6 +66,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
             "updated_at",
             "published_at",
             "category",
+            "photos",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -67,3 +81,7 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     def get_short_description(self, obj):
         language = self._get_language()
         return obj.get_short_description(language=language)
+
+    def get_photos(self, obj):
+        photos = obj.photos.all()
+        return NewsPhotoSerializer(photos, many=True, context=self.context).data

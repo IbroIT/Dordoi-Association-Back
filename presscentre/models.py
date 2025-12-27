@@ -210,6 +210,9 @@ class NewsPhoto(models.Model):
     def __str__(self):
         return f"Фото {self.id} для новости {self.news.title_ru}"
 
+    def get_alt_text(self, language="ru"):
+        return self.news.get_title(language=language)
+
 
 class Publication(models.Model):
     title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")

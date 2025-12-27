@@ -98,5 +98,5 @@ class NewsSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
         return obj.get_description(language=self._get_language())
 
     def get_photos(self, obj):
-        photos = obj.newsphoto_set.all()
-        return GallerySerializer(photos, many=True, context=self.context).data
+        photos = obj.photos.all()
+        return NewsPhotoSerializer(photos, many=True, context=self.context).data

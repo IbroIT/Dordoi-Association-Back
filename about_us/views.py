@@ -2,8 +2,13 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import FactCard, FactDetail,Leader
-from .serializers import FactCardSerializer, FactDetailSerializer,LeaderSerializer
+from .models import FactCard, Leader, History, Structure
+from .serializers import (
+    FactCardSerializer,
+    LeaderSerializer,
+    HistorySerializer,
+    StructureSerializer,
+)
 from rest_framework import generics
 
 
@@ -12,6 +17,7 @@ class LeaderListView(generics.ListAPIView):
     View для получения списка всех лидеров
     Поддерживает параметр lang для выбора языка (ru, en, kg)
     """
+
     queryset = Leader.objects.all()
     serializer_class = LeaderSerializer
 
@@ -19,20 +25,23 @@ class LeaderListView(generics.ListAPIView):
         context = super().get_serializer_context()
         context["language"] = self.request.query_params.get("lang", "ru")
         return context
+
 
 class LeaderDetailView(generics.RetrieveAPIView):
     """
     View для получения детальной информации о лидере
     Поддерживает параметр lang для выбора языка (ru, en, kg)
     """
+
     queryset = Leader.objects.all()
     serializer_class = LeaderSerializer
-    lookup_field = 'id'
+    lookup_field = "id"
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context["language"] = self.request.query_params.get("lang", "ru")
         return context
+
 
 class LocalizationMixin:
     """Миксин для передачи языка в контекст сериализатора"""
@@ -48,6 +57,16 @@ class LocalizationMixin:
         return context
 
 
+class BannerFact(LocalizationMixin, generics.ListAPIView):
+    """
+    View для получения списка факт-карт, отмеченных как баннеры
+    Поддерживает параметр lang для выбора языка (ru, en, kg)
+    """
+
+    queryset = FactCard.objects.filter(is_banner=True).order_by("id")
+    serializer_class = FactCardSerializer
+
+
 class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     """
     ViewSet для получения факт-карт с деталями.
@@ -58,7 +77,7 @@ class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     - search: поиск по названию и описанию
     """
 
-    queryset = FactCard.objects.prefetch_related("details").all().order_by("id")
+    queryset = FactCard.objects.all().order_by("id")
     serializer_class = FactCardSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = [
@@ -68,21 +87,41 @@ class FactCardViewSet(LocalizationMixin, ReadOnlyModelViewSet):
         "description_en",
         "description_ru",
         "description_kg",
+        "detail_en",
+        "detail_ru",
+        "detail_kg",
     ]
     ordering_fields = ["id", "title_ru", "title_en", "title_kg"]
 
 
-class FactDetailViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+class HistoryViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     """
-    ViewSet для получения деталей фактов.
-
-    Query Parameters:
-    - lang: ru, en, kg (язык ответа)
-    - card: ID факт-карты (фильтр)
+    Read-only viewset для истории — появится в корне роутера /api/about-us/
+    Поддерживает параметр ?lang=ru|en|kg
     """
 
-    queryset = FactDetail.objects.select_related("card").all().order_by("id")
-    serializer_class = FactDetailSerializer
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["card"]
-    ordering_fields = ["id", "card"]
+    queryset = History.objects.all().order_by("order")
+    serializer_class = HistorySerializer
+    ordering_fields = ["order"]
+
+
+class StructureViewSet(LocalizationMixin, ReadOnlyModelViewSet):
+    """
+    Read-only viewset для структурных подразделений
+    Поддерживает параметр ?lang=ru|en|kg
+    Поиск по slug: /api/about-us/structure/dordoi-trade/
+    """
+
+    queryset = Structure.objects.all().order_by("order")
+    serializer_class = StructureSerializer
+    lookup_field = "slug"
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = [
+        "name_en",
+        "name_ru",
+        "name_kg",
+        "description_en",
+        "description_ru",
+        "description_kg",
+    ]
+    ordering_fields = ["order", "name_ru"]

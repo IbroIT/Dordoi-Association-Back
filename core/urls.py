@@ -14,6 +14,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from .views import health_check, serve_media
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -21,6 +22,12 @@ urlpatterns = [
     path("api/about-us/", include("about_us.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/", include("partners.urls")),
+    path("health/", health_check, name="health_check"),
+    path("media/<path:path>", serve_media, name="serve_media"),
+    path("api/", include("Banners.urls")),
+    path("api/gallery/", include("Gallery.urls")),
+    path("api/", include("contacts.urls")),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),  # CKEditor 5 upload endpoint
     path(
         "swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),

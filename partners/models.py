@@ -63,3 +63,5 @@ class Partner(models.Model):
         return getattr(self, f"ulugi_{language}", self.ulugi_ru)
     def get_achievements(self, language="ru"):
         return getattr(self, f"achievements_{language}", self.achievements_ru)  
+    
+

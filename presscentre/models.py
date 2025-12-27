@@ -1,9 +1,9 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from Gallery.models import Gallery
 
 
 class Category(models.Model):
-
 
     title_en = models.CharField(max_length=255, verbose_name="Название (EN)")
     title_ru = models.CharField(max_length=255, verbose_name="Название (RU)")
@@ -44,7 +44,19 @@ class Category(models.Model):
 
 class News(models.Model):
 
-    category = models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,blank=True,related_name="news",verbose_name="Категория",)
+    is_banner = models.BooleanField(
+        default=False,
+        verbose_name="Баннер",
+        help_text="Отображать новость в виде баннера на главной странице",
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="news",
+        verbose_name="Категория",
+    )
 
     is_recommended = models.BooleanField(
         default=False,
@@ -57,21 +69,47 @@ class News(models.Model):
     title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
     title_kg = models.CharField(max_length=255, verbose_name="Заголовок (KG)")
 
+    short_description_en = models.TextField(
+        blank=True,
+        verbose_name="Краткое описание (EN)",
+    )
+    short_description_ru = models.TextField(
+        blank=True,
+        verbose_name="Краткое описание (RU)",
+    )
+    short_description_kg = models.TextField(
+        blank=True,
+        verbose_name="Краткое описание (KG)",
+    )
 
-    short_description_en = models.TextField(blank=True,verbose_name="Краткое описание (EN)",)
-    short_description_ru = models.TextField(blank=True,verbose_name="Краткое описание (RU)",)
-    short_description_kg = models.TextField(blank=True, verbose_name="Краткое описание (KG)",)
-    
     description_en = models.TextField(blank=True, verbose_name="Описание (EN)")
     description_ru = models.TextField(blank=True, verbose_name="Описание (RU)")
     description_kg = models.TextField(blank=True, verbose_name="Описание (KG)")
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания", db_index=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата создания", db_index=True
+    )
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
-    published_at = models.DateField(null=True, blank=True, verbose_name="Дата публикации", db_index=True)
+    published_at = models.DateField(
+        null=True, blank=True, verbose_name="Дата публикации", db_index=True
+    )
 
-    image = models.ImageField(upload_to="news/",null=True,blank=True,verbose_name="Изображение",help_text="Рекомендуемый размер: 1200x630px",)
+    image = models.ImageField(
+        upload_to="news/",
+        null=True,
+        blank=True,
+        verbose_name="Изображение",
+        help_text="Рекомендуемый размер: (16:9)",
+    )
+
+    cropping = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Обрезка изображения",
+        help_text="Координаты обрезки изображения (JSON формат)",
+    )
 
     class Meta:
         verbose_name = "Новость"
@@ -148,30 +186,56 @@ class News(models.Model):
 
 
 class NewsPhoto(models.Model):
-    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='photos', verbose_name="Новость")
-    image = models.ImageField(upload_to="news/photos/", verbose_name="Фото")
-    alt_text_en = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (EN)")
-    alt_text_ru = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (RU)")
-    alt_text_kg = models.CharField(max_length=255, blank=True, verbose_name="Alt текст (KG)")
-    order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
+    news = models.ForeignKey(
+        News,
+        on_delete=models.CASCADE,
+        related_name="photos",
+        verbose_name="Новость",
+    )
+    image = models.ImageField(
+        upload_to="news/photos/",
+        verbose_name="Фото",
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок",
+        help_text="Порядок отображения фото",
+    )
 
     class Meta:
         verbose_name = "Фото новости"
-        verbose_name_plural = "Фото новостей"
-        ordering = ['order', 'id']
+        verbose_name_plural = "Фото новости"
+        ordering = ["order", "id"]
 
     def __str__(self):
-        return f"Фото для {self.news.get_title()}"
+        return f"Фото {self.id} для новости {self.news.title_ru}"
 
-    def get_alt_text(self, language="ru"):
-        field_name = f"alt_text_{language}"
+
+class Publication(models.Model):
+    title_en = models.CharField(max_length=255, verbose_name="Заголовок (EN)")
+    title_ru = models.CharField(max_length=255, verbose_name="Заголовок (RU)")
+    title_kg = models.CharField(max_length=255, verbose_name="Заголовок (KG)")
+
+    link = models.URLField(max_length=500, verbose_name="Ссылка", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Публикация"
+        verbose_name_plural = "Публикации"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.get_title()
+
+    def get_title(self, language="ru"):
+        field_name = f"title_{language}"
         value = getattr(self, field_name, None)
         if value and value.strip():
             return value.strip()
-        # Fallback to other languages
-        for lang in ['ru', 'en', 'kg']:
-            if lang != language:
-                val = getattr(self, f"alt_text_{lang}", None)
-                if val and val.strip():
-                    return val.strip()
-        return ""
+        if language != "ru" and self.title_ru and self.title_ru.strip():
+            return self.title_ru.strip()
+        if language != "en" and self.title_en and self.title_en.strip():
+            return self.title_en.strip()
+        return f"Publication #{self.pk}" if self.pk else "New Publication"

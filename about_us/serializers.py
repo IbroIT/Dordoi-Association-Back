@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FactCard, FactDetail, Leader
+from .models import FactCard, Leader, History, Structure
 
 
 class LeaderSerializer(serializers.ModelSerializer):
@@ -11,15 +11,7 @@ class LeaderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Leader
-        fields = [
-            'id',
-            'photo',
-            'name',
-            'position',
-            'bio',
-            'achievements',
-            'education'
-        ]
+        fields = ["id", "photo", "name", "position", "bio", "achievements", "education"]
 
     def get_name(self, obj):
         return obj.get_name(self.context.get("language", "ru"))
@@ -35,6 +27,7 @@ class LeaderSerializer(serializers.ModelSerializer):
 
     def get_education(self, obj):
         return obj.get_education(self.context.get("language", "ru"))
+
 
 class LocalizationSerializerMixin:
     """Миксин для локализации сериализаторов"""
@@ -53,27 +46,13 @@ class LocalizationSerializerMixin:
         return "ru"
 
 
-class FactDetailSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
-    detail = serializers.SerializerMethodField()
-
-    class Meta:
-        model = FactDetail
-        fields = ["id", "detail"]
-        read_only_fields = ["id"]
-
-    def get_detail(self, obj):
-        language = self._get_language()
-        return obj.get_detail(language=language)
-
-
 class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    details = FactDetailSerializer(many=True, read_only=True)
 
     class Meta:
         model = FactCard
-        fields = ["id", "icon", "title", "description", "details"]
+        fields = ["id", "photo", "title", "description", "is_banner"]
         read_only_fields = ["id"]
 
     def get_title(self, obj):
@@ -95,3 +74,48 @@ class FactCardSerializer(LocalizationSerializerMixin, serializers.ModelSerialize
             return obj.description_en.strip()
 
         return ""
+
+
+
+
+class HistorySerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = History
+        fields = ["id", "description", "image", "order"]
+        read_only_fields = ["id"]
+
+    def get_description(self, obj):
+        language = self._get_language()
+        field_name = f"description_{language}"
+        return getattr(obj, field_name, obj.description_ru)
+
+
+class StructureSerializer(LocalizationSerializerMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Structure
+        fields = [
+            "id",
+            "slug",
+            "logo",
+            "name",
+            "description",
+            "address",
+            "email",
+            "phone",
+            "order",
+        ]
+        read_only_fields = ["id"]
+        lookup_field = "slug"
+
+    def get_name(self, obj):
+        return obj.get_name(language=self._get_language())
+
+    def get_description(self, obj):
+        language = self._get_language()
+        # Получаем RichText content и возвращаем как есть (с HTML тегами)
+        return obj.get_description(language=language)

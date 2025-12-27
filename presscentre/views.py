@@ -70,3 +70,9 @@ class NewsViewSet(LocalizationMixin, ReadOnlyModelViewSet):
     ]
     ordering_fields = ["created_at", "published_at", "title_ru"]
     filterset_fields = ["category", "is_banner", "is_recommended"]
+
+    @action(detail=False, methods=['get'])
+    def banners(self, request):
+        banners = self.get_queryset().filter(is_banner=True)
+        serializer = self.get_serializer(banners, many=True)
+        return Response(serializer.data)

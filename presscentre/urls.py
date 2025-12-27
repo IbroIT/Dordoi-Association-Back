@@ -15,4 +15,5 @@ router.register(r"news", NewsViewSet, basename="news")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("news-banners/", NewsViewSet.as_view({'get': 'banners'}), name="news-banners"),
 ]
